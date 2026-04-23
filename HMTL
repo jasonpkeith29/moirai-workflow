@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moirai Workflow Comparison</title>
+  <style>
+    :root {
+      --page-bg: #f8fafc;
+      --surface: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-soft: #94a3b8;
+      --border: #e2e8f0;
+      --automation-bg: #ecfeff;
+      --automation-border: #67e8f9;
+      --manual-border: #fdba74;
+      --new-border: #93c5fd;
+      --shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+      --orange: #ea580c;
+      --blue: #2563eb;
+      --indigo: #4f46e5;
+      --teal: #0f766e;
+      --slate: #1e293b;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--page-bg);
+      color: var(--text-main);
+    }
+    .page {
+      max-width: 1360px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .header { margin-bottom: 24px; }
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .header p {
+      margin: 6px 0 0;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.5;
+      max-width: 1000px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .summary-card,
+    .workflow-card,
+    .persona-journey-card,
+    .merge-card,
+    .process-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .summary-card {
+      padding: 14px 16px;
+    }
+    .summary-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+    .summary-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.45;
+    }
+
+    .section-title {
+      margin: 28px 0 12px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .section-subtitle {
+      margin: -4px 0 14px;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.5;
+      max-width: 1020px;
+    }
+
+    .workflow-header,
+    .persona-header,
+    .merge-header,
+    .process-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+      flex-wrap: wrap;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .header-note {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .badges {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge.manual { background: #ffedd5; color: #9a3412; }
+    .badge.automation { background: #cffafe; color: #155e75; }
+    .badge.high { background: #dcfce7; color: #166534; }
+    .badge.stronger { background: #dbeafe; color: #1d4ed8; }
+    .badge.persona { background: #e0e7ff; color: #4338ca; }
+
+    .workflow-steps,
+    .merge-steps {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 10px;
+      padding: 16px;
+      align-items: stretch;
+    }
+    .workflow-step,
+    .merge-step,
+    .journey-step {
+      position: relative;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--step-accent);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .workflow-step.current {
+      background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+      min-height: 196px;
+    }
+    .workflow-step:not(:last-child)::after,
+    .merge-step:not(:last-child)::after,
+    .journey-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-soft);
+      font-size: 20px;
+      font-weight: 700;
+      z-index: 2;
+    }
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--step-accent);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .step-name {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+    .step-copy {
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+    .step-tag {
+      display: inline-block;
+      width: fit-content;
+      margin-top: auto;
+      padding: 4px 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: #ecfeff;
+      color: #155e75;
+      border: 1px solid #67e8f9;
+    }
+    .step-tag.manual {
+      background: #fff1e6;
+      color: #9a3412;
+      border: 1px solid #fdba74;
+    }
+
+    .cascade-flow {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .cascade-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+      flex-wrap: wrap;
+    }
+    .cascade-body {
+      padding: 18px;
+      background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    }
+    .entry-lanes {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      position: relative;
+    }
+    .entry-lane {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .entry-lane-card,
+    .shared-step {
+      position: relative;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--step-accent);
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+    }
+    .entry-lane-card {
+      min-height: 176px;
+      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+    }
+    .entry-title {
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+    .entry-copy {
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+    .entry-tag,
+    .shared-tag {
+      display: inline-block;
+      width: fit-content;
+      margin-top: auto;
+      padding: 4px 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: #ecfeff;
+      color: #155e75;
+      border: 1px solid #67e8f9;
+    }
+    .merge-hub {
+      max-width: 520px;
+      margin: 34px auto 0;
+      padding: 13px 16px;
+      border-radius: 12px;
+      background: #ecfeff;
+      border: 1px solid #67e8f9;
+      color: #155e75;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.5;
+      font-weight: 800;
+      position: relative;
+    }
+    .merge-hub::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -34px;
+      width: 1px;
+      height: 34px;
+      background: #94a3b8;
+    }
+    .merge-hub::after {
+      content: "↓";
+      position: absolute;
+      left: 50%;
+      bottom: -26px;
+      transform: translateX(-50%);
+      color: var(--text-soft);
+      font-size: 20px;
+      font-weight: 800;
+    }
+    .entry-lanes::after {
+      content: "";
+      position: absolute;
+      left: calc(12.5% + 7px);
+      right: calc(12.5% + 7px);
+      bottom: -18px;
+      height: 1px;
+      background: #94a3b8;
+    }
+    .entry-lane::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -18px;
+      width: 1px;
+      height: 18px;
+      background: #94a3b8;
+    }
+    .shared-flow {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 42px;
+      align-items: stretch;
+    }
+    .shared-step {
+      min-height: 170px;
+      background: linear-gradient(180deg, #ecfeff 0%, #ffffff 100%);
+    }
+    .shared-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-soft);
+      font-size: 20px;
+      font-weight: 800;
+      z-index: 2;
+    }
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--step-accent);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .step-name {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+    .step-copy {
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+    .publish-split {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px dashed #94a3b8;
+    }
+    .publish-split-title {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+    .publish-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+    .publish-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+      border-top: 5px solid var(--publish-accent);
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 14px;
+      min-height: 190px;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+    }
+    .publish-card.preprod {
+      background: linear-gradient(180deg, #f0fdfa 0%, #ffffff 100%);
+    }
+    .publish-card.prod {
+      background: linear-gradient(180deg, #eef2ff 0%, #ffffff 100%);
+    }
+    .publish-title {
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+    .publish-copy {
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+    .publish-list {
+      margin: 0;
+      padding-left: 16px;
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+    .publish-list li + li {
+      margin-top: 4px;
+    }
+    .promotion-note {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #c4b5fd;
+      background: #f5f3ff;
+      color: #4c1d95;
+      font-size: 12px;
+      line-height: 1.5;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .flow-footnote {
+      margin-top: 16px;
+      padding: 12px 14px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .process-board {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .process-grid {
+      display: grid;
+      grid-template-columns: 1.02fr 1.02fr 0.96fr;
+      gap: 0;
+    }
+    .process-cell {
+      padding: 14px 16px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .process-grid .process-cell:nth-child(3n) {
+      border-right: none;
+    }
+    .process-cell.current {
+      background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+      border-top: 4px solid var(--manual-border);
+    }
+    .process-cell.future {
+      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+      border-top: 4px solid var(--new-border);
+    }
+    .process-cell.automation {
+      background: linear-gradient(180deg, var(--automation-bg) 0%, #ffffff 100%);
+      border-top: 4px solid var(--automation-border);
+    }
+    .cell-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .step-list,
+    .automation-list {
+      margin: 0;
+      padding-left: 16px;
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--text-main);
+    }
+    .step-list li + li,
+    .automation-list li + li {
+      margin-top: 5px;
+    }
+    .step-highlight {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+    .step-highlight.manual {
+      background: #fff1e6;
+      color: #9a3412;
+      border: 1px solid #fdba74;
+    }
+    .step-highlight.future {
+      background: #e8f1ff;
+      color: #1d4ed8;
+      border: 1px solid #93c5fd;
+    }
+    .step-highlight.auto {
+      background: #ecfeff;
+      color: #155e75;
+      border: 1px solid #67e8f9;
+    }
+    .questions-board {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .question-accordion {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .question-toggle {
+      width: 100%;
+      border: 0;
+      background: #f8fafc;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      font-family: inherit;
+    }
+    .question-toggle:hover {
+      background: #f1f5f9;
+    }
+    .question-title {
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .question-count {
+      margin-left: auto;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .question-chevron {
+      color: var(--text-muted);
+      font-size: 16px;
+      font-weight: 900;
+      transition: transform 0.15s ease;
+    }
+    .question-accordion.open .question-chevron {
+      transform: rotate(90deg);
+    }
+    .question-panel {
+      display: none;
+      padding: 0 16px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .question-accordion.open .question-panel {
+      display: block;
+    }
+    .question-context {
+      margin: 12px 0;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #f8fafc;
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .review-question-list {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--text-main);
+    }
+    .review-question-list li + li {
+      margin-top: 6px;
+    }
+
+    .footer {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 12px;
+      margin-top: 18px;
+    }
+
+
+    /* Align all pill/tag containers to a consistent baseline within each card. */
+    .workflow-step,
+    .entry-lane-card,
+    .shared-step,
+    .process-cell {
+      display: flex;
+      flex-direction: column;
+    }
+    .step-tag,
+    .entry-tag,
+    .shared-tag,
+    .step-highlight {
+      margin-top: auto;
+      align-self: flex-start;
+    }
+    .step-copy,
+    .entry-copy,
+    .publish-copy,
+    .step-list,
+    .automation-list {
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 1260px) {
+      .summary-grid,
+      .workflow-steps,
+      .entry-lanes,
+      .shared-flow,
+      .publish-grid,
+      .process-grid {
+        grid-template-columns: 1fr;
+      }
+      .workflow-step:not(:last-child)::after,
+      .shared-step:not(:last-child)::after {
+        display: none;
+      }
+      .process-grid .process-cell {
+        border-right: none;
+      }
+    }
+    @media (max-width: 720px) {
+      .page { padding: 16px; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .header-note,
+      .badges { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="eyebrow">Workflow Comparison</div>
+      <h1>Current ADW Process vs. New Moirai Process</h1>
+      <p>This view focuses on workflow structure and the operating-model shift from a manual, human-coordinated ADW process to a more automated Moirai process. The new workflow now shows distinct entry paths for each user persona and then makes the point where those paths converge into a shared governed workflow.</p>
+    </header>
+
+    <section class="summary-grid" aria-label="Executive summary metrics">
+      <div class="summary-card">
+        <div class="summary-label">Current State</div>
+        <div class="summary-value">Human-coordinated, review-heavy, and spread across Jira, Bitbucket, Confluence, metadata tables, admin steps, and Airflow execution.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Target State</div>
+        <div class="summary-value">Intent-driven workflow with tailored entry paths, automated validation, generated DAGs, standard quality gates, and explicit publication flow.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Efficiency Outlook</div>
+        <div class="summary-value">Likely 30% to 60% faster for standard work with 50% to 80% fewer repetitive manual execution steps.</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Persona Value</div>
+        <div class="summary-value">Shows clearly that the new process can support low-friction analysts, advanced builders, and downstream consumers without forcing everyone through the same manual workflow.</div>
+      </div>
+    </section>
+
+    <h2 class="section-title">Existing Product Analytics ADW Workflow</h2>
+    <p class="section-subtitle">This graphic summarizes the current operating model from the ADW implementation, data model review, and data asset creation processes. It shows why the current path is rigorous but operationally heavy.</p>
+    <section class="workflow-card" id="currentWorkflowCard"></section>
+
+    <h2 class="section-title">Proposed Moirai Workflow by User Persona</h2>
+    <p class="section-subtitle">Instead of forcing one generic view, this section shows the initial workflow for each persona separately. The distinct paths then collapse into the shared governed workflow once the request is structured and the platform takes over the repeated mechanics.</p>
+    <section class="cascade-flow" id="cascadeFlow"></section>
+
+    <h2 class="section-title">Process Walkthrough: Old vs New</h2>
+    <p class="section-subtitle">This section makes the operational value explicit. It compares the current process to the Moirai process stage by stage and calls out where automation can replace repeated handoffs, SQL assembly, deployment mechanics, and fragmented governance work.</p>
+    <section class="process-board" id="processBoard"></section>
+
+    <h2 class="section-title">Expected Review Questions From Current ADW Owners</h2>
+    <p class="section-subtitle">These are the likely pressure-test questions from the team that stood up and currently manages the old process. They are collapsed by default so the page stays focused, but they provide a checklist of risks to answer or close before treating Moirai as a replacement workflow.</p>
+    <section class="questions-board" id="questionsBoard"></section>
+
+    <p class="footer">Top: current workflow. Middle: persona-specific entry workflows cascading into the shared Moirai workflow. Bottom: value walkthrough and review-question checklist.</p>
+  </div>
+
+  <script>
+    const currentWorkflow = {
+      title: "Current ADW Workflow",
+      note: "High manual coordination, multiple tools, explicit human signoffs",
+      steps: [
+        { n: 1, name: "Define Request", copy: "Create project plan, gather requirements, identify stakeholders, and align to release tracking and review expectations.", accent: "#ea580c", tag: "Manual coordination" },
+        { n: 2, name: "Discover Existing Assets", copy: "Search ADW Catalog, legacy inventories, dependency tools, and prior documentation to determine what already exists.", accent: "#ea580c", tag: "Manual discovery" },
+        { n: 3, name: "Design and Model Review", copy: "Create Confluence design artifacts, follow naming standards, schedule iterative design reviews, and obtain model feedback and signoff.", accent: "#ea580c", tag: "Manual review" },
+        { n: 4, name: "Build Tables, Views, and Jobs", copy: "Create SQL, metadata-model entries, DDL, views, Airflow jobs, configs, and test cases across multiple repos and systems.", accent: "#ea580c", tag: "Manual build" },
+        { n: 5, name: "Test in Dev and Staging", copy: "Run development and staging validation, inspect data manually, review metadata, document results, and update artifacts.", accent: "#ea580c", tag: "Manual validation" },
+        { n: 6, name: "Create Deploy Ticket and Signoff", copy: "Open Jira implementation ticket, obtain SDLC approvals, coordinate with approver and executor, and prepare deployment instructions.", accent: "#ea580c", tag: "Manual approvals" },
+        { n: 7, name: "Execute in Production", copy: "ADW admin or authorized executor triggers production actions, executes SQL or DAG steps, and records proof of execution.", accent: "#ea580c", tag: "Manual execution" },
+        { n: 8, name: "Update Catalog and Trackers", copy: "Update metadata model, ADW Catalog, Confluence links, trackers, and release status so governance artifacts catch up with implementation.", accent: "#ea580c", tag: "Manual governance" }
+      ]
+    };
+
+    const cascadeFlow = {
+      title: "New Moirai Workflow: Entry Workflows Cascade Into Shared Delivery",
+      note: "Different user workflows first, common delivery workflow second",
+      entries: [
+        {
+          n: 1,
+          title: "SQL Analyst Workflow",
+          copy: "Low-code path for standard SQL-driven assets. The user provides source, target, SQL intent, and basic rules without needing Python or Airflow expertise.",
+          accent: "#0ea5e9",
+          tag: "Factory path"
+        },
+        {
+          n: 2,
+          title: "Data Builder Workflow",
+          copy: "Advanced configuration path for users who need richer transformations, domain-specific logic, or controlled customization of approved templates.",
+          accent: "#4f46e5",
+          tag: "Template path"
+        },
+        {
+          n: 3,
+          title: "Code-First / Complex Workflow",
+          copy: "Engineer-oriented path for complex Python, dbt, Spark, AI, or scaffolded workflows that cannot be expressed as simple YAML alone.",
+          accent: "#7c3aed",
+          tag: "Scaffold path"
+        },
+        {
+          n: 4,
+          title: "Consumer / Promotion Workflow",
+          copy: "Outcome-driven path for consumers, executives, AI models, or downstream teams that need trusted assets, lineage, and promotion from fast lane to certified lane.",
+          accent: "#0f766e",
+          tag: "Consumption path"
+        }
+      ],
+      merge: "Moirai absorbs the persona-specific request and converts it into one governed delivery workflow.",
+      shared: [
+        { n: 1, name: "Submit Structured Request", copy: "The request enters Moirai as YAML, advanced config, scaffold metadata, or a promotion/consumption signal.", accent: "#0f766e", tag: "Shared intake" },
+        { n: 2, name: "Validate and Guide", copy: "Pydantic and platform checks validate structure, required fields, naming, and readiness with remediation feedback.", accent: "#0f766e", tag: "Automation" },
+        { n: 3, name: "Route Pattern", copy: "Pattern Engine routes to Factory, Template, Scaffold, or promotion handling based on complexity and trust requirements.", accent: "#0f766e", tag: "Automation" },
+        { n: 4, name: "Generate DAG + Deployment Plan", copy: "Moirai generates the DAG, execution scaffolding, metadata hooks, quality controls, and a deployment plan rather than bypassing release controls.", accent: "#0f766e", tag: "Automation" },
+        { n: 5, name: "Execute Compute", copy: "Airflow orchestrates Snowflake, EKS, dbt, or other compute while keeping orchestration lightweight and standardized.", accent: "#0f766e", tag: "Standardized" },
+        { n: 6, name: "Run Quality Gates + Remediation", copy: "Rows, nulls, freshness, custom rules, standards, and failure notifications run before publication; failed checks return actionable remediation feedback.", accent: "#0f766e", tag: "Quality" },
+        { n: 7, name: "Approval / Publish Gate", copy: "The gate determines whether the asset can publish to Pre-Prod / Lane B, ADW Prod / Lane A, or must return for remediation before exposure.", accent: "#0f766e", tag: "Governance gate" }
+      ],
+      publishSplit: {
+        title: "Publish Path Splits After Approval Gate",
+        preprod: {
+          title: "Publish to Pre-Prod / Lane B",
+          copy: "Fast, domain-owned publication path for exploration, limited-domain use, and assets that are not yet certified for broad enterprise reuse.",
+          bullets: [
+            "Visible as non-certified or lower-trust in Catalog",
+            "Requires owner, lineage, quality status, and clear usage expectations",
+            "Optimized for speed-to-insight while preventing accidental certified consumption"
+          ]
+        },
+        prod: {
+          title: "Publish to ADW Prod / Lane A",
+          copy: "Certified, high-trust publication path for shared, mission-critical, executive, AI, or cross-team assets.",
+          bullets: [
+            "Requires stronger signoff and production readiness",
+            "Requires complete metadata, owner, lineage, SLA/status, and quality results",
+            "Published as certified or high-trust in the Catalog / ADW"
+          ]
+        },
+        promotion: "Promotion path: Pre-Prod / Lane B can move to ADW Prod / Lane A when it is reused by multiple teams, powers executive reporting, becomes mission-critical, requires a formal SLA, or needs certified catalog status."
+      },
+      footnote: "This shows the intended operating model: users do not all follow the same front-end path, but the platform normalizes the work into one shared delivery, quality, approval, publication, and governance process. Moirai automates repetitive mechanics; it should not remove required governance controls."
+    };
+
+    const reviewQuestionGroups = [
+      {
+        title: "Governance and Approvals",
+        context: "The current process is slow partly because it enforces accountability. Expect reviewers to test whether Moirai preserves the right approval authority and audit controls.",
+        questions: [
+          "Which changes can be fully automated versus which still require human signoff?",
+          "Who approves Lane A / ADW Prod publication?",
+          "Does Moirai preserve developer / approver / executor separation where required?",
+          "How does this satisfy SDLC, BLSO, audit, SOX, HITRUST, and production-access controls?",
+          "Can the AI Governor approve anything, or only recommend and triage?",
+          "Where does manual override happen, and how is it audited?"
+        ]
+      },
+      {
+        title: "Metadata and Semantic Model",
+        context: "The existing ADW process is deeply tied to semantic consistency. The team will push hard on whether Moirai handles meaning, not just pipeline mechanics.",
+        questions: [
+          "How does Moirai update or integrate with the ADW metadata model?",
+          "Does it generate table/view metadata automatically, and who validates it?",
+          "How are descriptions, class words, data types, nullability, dimensions, and measures enforced?",
+          "How does it prevent duplicate or conflicting business concepts?",
+          "Does it check for existing ADW dimensions, facts, degenerate dimensions, and business concepts before creating new ones?",
+          "When is formal data model review still mandatory?"
+        ]
+      },
+      {
+        title: "Quality and Testing",
+        context: "Quality gates cannot just mean generic row-count checks. Reviewers will expect technical, semantic, and business-rule quality controls.",
+        questions: [
+          "What default quality checks are injected into every DAG?",
+          "Who defines thresholds, and are they different for Lane A versus Lane B?",
+          "What happens when checks fail, and does the user receive remediation guidance?",
+          "Can checks be waived, who approves waivers, and are waivers visible later?",
+          "Are business-rule validations, referential integrity checks, dbt tests, and regression tests included?",
+          "Are quality results written back to the catalog or metadata layer?"
+        ]
+      },
+      {
+        title: "Pre-Prod vs Prod Publication",
+        context: "Lane B can become shadow production if the trust boundary is not clear. This is likely to be one of the most important governance discussions.",
+        questions: [
+          "How do you prevent Lane B / Pre-Prod assets from becoming unofficial production?",
+          "How is Lane B labeled in the catalog so consumers understand it is not certified?",
+          "Who can consume Lane B assets?",
+          "What are the promotion criteria from Lane B to Lane A?",
+          "What happens if an executive report or cross-team workflow starts using a Lane B asset?",
+          "Who approves promotion into ADW Prod / Lane A?"
+        ]
+      },
+      {
+        title: "AI Governor Boundaries",
+        context: "The AI Governor is novel and will attract scrutiny. The safest framing is AI as advisor and triage layer, not final certification authority.",
+        questions: [
+          "What exactly does the AI Governor review?",
+          "Which decisions are deterministic rules versus AI-assisted judgment?",
+          "Is there an audit trail of AI recommendations and decisions?",
+          "Can AI override a failed deterministic check?",
+          "How are false positives and false negatives handled?",
+          "What requires mandatory human review even if the AI Governor says it looks good?"
+        ]
+      },
+      {
+        title: "Operations, Ownership, and Support",
+        context: "Automation without clear ownership creates support ambiguity. Every generated pipeline still needs a human accountability model.",
+        questions: [
+          "Who owns a failed generated pipeline?",
+          "Who owns a bad data issue: analyst, builder, platform team, ADW team, or domain owner?",
+          "Who supports generated DAGs and template/scaffold failures?",
+          "What happens outside business hours?",
+          "What run metadata, logs, lineage, and replay information are captured?",
+          "What is the rollback or recovery plan after a bad publish?"
+        ]
+      },
+      {
+        title: "Cost, Security, and Audit",
+        context: "Self-service generation can create cost and access risk if guardrails are weak. The current process controls production tightly, and that concern will carry forward.",
+        questions: [
+          "How does Moirai prevent expensive Snowflake queries or runaway warehouse usage?",
+          "How are warehouses, Snowflake roles, EKS resources, secrets, and grants selected and controlled?",
+          "Which service account executes generated workflows?",
+          "How are write permissions to ADW Prod restricted?",
+          "How is every automated action audited end-to-end?",
+          "How do generated workflows comply with security, privacy, SOX, and HITRUST constraints?"
+        ]
+      },
+      {
+        title: "Migration Approach",
+        context: "Current process owners will want a safe adoption path, not a big-bang replacement of the governed ADW workflow.",
+        questions: [
+          "Does Moirai replace the current process immediately or run alongside it first?",
+          "Which asset types are in scope for the pilot?",
+          "What happens to existing ADW assets and existing Bitbucket/Jira/metadata workflows?",
+          "How do we avoid two competing processes?",
+          "What are the success metrics for the pilot?",
+          "Which process owners must sign off before expanding from pilot to production use?"
+        ]
+      }
+    ];
+
+    const processWalkthrough = [
+      {
+        title: "1. Request Intake and Scoping",
+        badges: [
+          { text: "Current Manual", cls: "manual" },
+          { text: "New Automation", cls: "automation" }
+        ],
+        current: [
+          "Create project plan, gather requirements, consult release tracking, and coordinate review meetings before work is fully shaped.",
+          "Check catalog, legacy inventories, dependency tools, and existing documentation manually.",
+          "Relies heavily on the builder understanding where to start and which teams to involve."
+        ],
+        future: [
+          "Analyst or builder starts with a structured request path appropriate to their level of sophistication.",
+          "The system routes the request into a known pattern path immediately instead of forcing every user through the same manual intake burden.",
+          "Persona-specific entry lowers friction without removing governance."
+        ],
+        automation: [
+          "Automated request parsing and validation of required submission fields.",
+          "Automated routing into Factory, Template, or Scaffold pattern types.",
+          "Potential automated dependency checks and preflight readiness summary before review."
+        ],
+        manualNote: "Current state burns time in preparation and routing before a single technical validation happens.",
+        futureNote: "New process compresses intake into structured persona-appropriate entry points.",
+        autoNote: "Best first win: replace manual intake navigation with guided submission and preflight feedback."
+      },
+      {
+        title: "2. Validation and Design Readiness",
+        badges: [
+          { text: "Cycle Time Win", cls: "high" },
+          { text: "Automation Opportunity", cls: "automation" }
+        ],
+        current: [
+          "Naming, modeling, metadata completeness, and implementation readiness are reviewed across spreadsheets, design reviews, SQL inspection, and human signoff cycles.",
+          "Errors are often found after work has already been constructed, which creates rework and delays.",
+          "The process defines what to check, but remediation is not always immediate or embedded in the user experience."
+        ],
+        future: [
+          "Pydantic Validator fails fast before DAG generation or compute execution begins.",
+          "Pattern Engine can reject incomplete requests before they become implementation work.",
+          "The system can return structured, immediate guidance rather than waiting for manual review comments."
+        ],
+        automation: [
+          "Automated schema validation, required-field validation, naming checks, and config linting.",
+          "Automated example fix suggestions for invalid YAML or missing fields.",
+          "Potential automated classification of errors into blocking vs advisory."
+        ],
+        manualNote: "Current state spends human review time on preventable structural issues.",
+        futureNote: "New process moves common failures to the front door.",
+        autoNote: "Highest leverage automation area: fail fast and show users how to fix the request immediately."
+      },
+      {
+        title: "3. Build and Workflow Construction",
+        badges: [
+          { text: "Manual Load High", cls: "manual" },
+          { text: "Automation High", cls: "automation" }
+        ],
+        current: [
+          "Builders create or update SQL, DDL, metadata model records, views, Airflow jobs, config, test cases, and deployment instructions manually.",
+          "Sample SQL exists, but assembly work still depends on builder skill and consistency.",
+          "The same basic mechanics are repeated many times for standard asset types."
+        ],
+        future: [
+          "Pattern Engine generates DAG structure and standard quality hooks from the request.",
+          "Factory and Template paths reduce the amount of handwritten pipeline scaffolding required.",
+          "Builders spend more time on edge cases and less time on repetitive assembly."
+        ],
+        automation: [
+          "Automated DAG generation from pattern definitions.",
+          "Automated injection of standard tasks, quality gates, and orchestration defaults.",
+          "Potential automated metadata skeleton generation for common asset types."
+        ],
+        manualNote: "Current state is operationally expensive because builders repeatedly perform the same construction tasks.",
+        futureNote: "New process standardizes the build path instead of reinventing it per asset.",
+        autoNote: "This is where manual execution steps should drop most sharply."
+      },
+      {
+        title: "4. Review, Quality, and Exception Handling",
+        badges: [
+          { text: "Quality Gain", cls: "high" },
+          { text: "Guardrail Needed", cls: "guardrail" }
+        ],
+        current: [
+          "Quality discipline exists, but much of it is manual: design signoff, implemented-table review, review of descriptions, business tests, and human feedback loops.",
+          "Builders and reviewers must remember which checks to add and how to interpret failures.",
+          "The process is strong but labor-intensive."
+        ],
+        future: [
+          "AI Governor and quality gate tasks make quality controls part of the generated workflow.",
+          "Feedback loop can notify builders automatically when runtime checks fail.",
+          "Standard controls become the default rather than a best effort."
+        ],
+        automation: [
+          "Auto-injected row count, null, freshness, and custom YAML-driven checks with remediation feedback when checks fail.",
+          "Automated failure notifications with failure context.",
+          "Potential AI-assisted triage of standards issues before human review."
+        ],
+        manualNote: "Current state depends on disciplined humans to make quality happen consistently.",
+        futureNote: "New process embeds quality in runtime behavior.",
+        autoNote: "Do not automate final trust decisions without deterministic checks and clear human override points."
+      },
+      {
+        title: "5. Deployment and Production Execution",
+        badges: [
+          { text: "Handoffs High", cls: "manual" },
+          { text: "Automation Medium", cls: "automation" }
+        ],
+        current: [
+          "Jira tickets, SDLC signoff, Bitbucket merges, database admin coordination, executor separation, deployment instructions, and manual production actions create many handoffs.",
+          "The role separation is good for control, but it adds waiting time and coordination overhead.",
+          "Standard changes still move through a relatively heavyweight promotion model."
+        ],
+        future: [
+          "Generated DAGs and deployment plans standardize how jobs are run, retried, reviewed, and observed.",
+          "Pattern-based promotion can reduce bespoke operational work while preserving approval gates for Lane A, production, sensitive, or nonstandard changes.",
+          "The platform can absorb more of the mechanics while preserving approval gates for higher-risk releases."
+        ],
+        automation: [
+          "Automated orchestration patterns, deferrable execution, and standardized retry behavior.",
+          "Automated readiness checks plus explicit approval gates for high-trust or production-bound changes.",
+          "Potential automated audit trail capture from request to execution."
+        ],
+        manualNote: "Current state achieves control through people and tickets.",
+        futureNote: "New process should achieve control through policy-aware automation plus selective approvals.",
+        autoNote: "Best redesign target: automate standard execution paths while keeping separation-of-duties for Lane A and sensitive changes."
+      },
+      {
+        title: "6. Publication, Catalog, and Ongoing Governance",
+        badges: [
+          { text: "Governance Gain", cls: "stronger" },
+          { text: "Automation Opportunity", cls: "automation" }
+        ],
+        current: [
+          "Catalog updates, metadata-model updates, tracker updates, documentation links, and completion signals are distributed across multiple systems.",
+          "Governance is real, but fragmented and partially manual.",
+          "Trust signals can lag behind implementation because publication steps happen after the core work."
+        ],
+        future: [
+          "Publication explicitly splits into Pre-Prod / Lane B and ADW Prod / Lane A after the approval gate.",
+          "Lane B supports fast/domain-owned publication, while Lane A supports certified/high-trust production publication.",
+          "Metadata visibility becomes part of the operational pipeline."
+        ],
+        automation: [
+          "Automated catalog publication gating on required metadata and quality status.",
+          "Automated capture of ownership, lineage, status, and trust classification.",
+          "Promotion triggers from Lane B to Lane A when usage, executive reporting, mission-criticality, formal SLA needs, or certified catalog requirements are met."
+        ],
+        manualNote: "Current state makes governance hard to see because it lives across tools.",
+        futureNote: "New process can make governance observable and enforced in-system.",
+        autoNote: "Best next step: require metadata completeness and publish gating before an asset is consumer-visible."
+      }
+    ];
+
+    function renderCurrentWorkflow() {
+      const root = document.getElementById('currentWorkflowCard');
+      root.innerHTML = `
+        <div class="workflow-header">
+          <div class="card-title">${currentWorkflow.title}</div>
+          <div class="header-note">${currentWorkflow.note}</div>
+        </div>
+        <div class="workflow-steps"></div>
+      `;
+      const stepsRoot = root.querySelector('.workflow-steps');
+      currentWorkflow.steps.forEach((step) => {
+        const el = document.createElement('article');
+        el.className = 'workflow-step current';
+        el.style.setProperty('--step-accent', step.accent);
+        el.innerHTML = `
+          <div class="step-number">${step.n}</div>
+          <div class="step-name">${step.name}</div>
+          <div class="step-copy">${step.copy}</div>
+          <div class="step-tag manual">${step.tag}</div>
+        `;
+        stepsRoot.appendChild(el);
+      });
+    }
+
+    function renderCascadeFlow() {
+      const root = document.getElementById('cascadeFlow');
+      root.innerHTML = `
+        <div class="cascade-header">
+          <div class="card-title">${cascadeFlow.title}</div>
+          <div class="header-note">${cascadeFlow.note}</div>
+        </div>
+        <div class="cascade-body">
+          <div class="entry-lanes"></div>
+          <div class="merge-hub">${cascadeFlow.merge}</div>
+          <div class="shared-flow"></div>
+          <div class="publish-split"></div>
+          <div class="flow-footnote">${cascadeFlow.footnote}</div>
+        </div>
+      `;
+
+      const entries = root.querySelector('.entry-lanes');
+      cascadeFlow.entries.forEach((entry) => {
+        const lane = document.createElement('section');
+        lane.className = 'entry-lane';
+        lane.innerHTML = `
+          <article class="entry-lane-card" style="--step-accent:${entry.accent};">
+            <div class="step-number">${entry.n}</div>
+            <div class="entry-title">${entry.title}</div>
+            <div class="entry-copy">${entry.copy}</div>
+            <div class="entry-tag">${entry.tag}</div>
+          </article>
+        `;
+        entries.appendChild(lane);
+      });
+
+      const shared = root.querySelector('.shared-flow');
+      cascadeFlow.shared.forEach((step) => {
+        const el = document.createElement('article');
+        el.className = 'shared-step';
+        el.style.setProperty('--step-accent', step.accent);
+        el.innerHTML = `
+          <div class="step-number">${step.n}</div>
+          <div class="step-name">${step.name}</div>
+          <div class="step-copy">${step.copy}</div>
+          <div class="shared-tag">${step.tag}</div>
+        `;
+        shared.appendChild(el);
+      });
+
+      const split = root.querySelector('.publish-split');
+      const preprodItems = cascadeFlow.publishSplit.preprod.bullets.map((item) => `<li>${item}</li>`).join('');
+      const prodItems = cascadeFlow.publishSplit.prod.bullets.map((item) => `<li>${item}</li>`).join('');
+      split.innerHTML = `
+        <div class="publish-split-title">${cascadeFlow.publishSplit.title}</div>
+        <div class="publish-grid">
+          <article class="publish-card preprod" style="--publish-accent:#0f766e;">
+            <div class="publish-title">${cascadeFlow.publishSplit.preprod.title}</div>
+            <div class="publish-copy">${cascadeFlow.publishSplit.preprod.copy}</div>
+            <ul class="publish-list">${preprodItems}</ul>
+          </article>
+          <article class="publish-card prod" style="--publish-accent:#4f46e5;">
+            <div class="publish-title">${cascadeFlow.publishSplit.prod.title}</div>
+            <div class="publish-copy">${cascadeFlow.publishSplit.prod.copy}</div>
+            <ul class="publish-list">${prodItems}</ul>
+          </article>
+        </div>
+        <div class="promotion-note">${cascadeFlow.publishSplit.promotion}</div>
+      `;
+    }
+
+    function renderReviewQuestions() {
+      const root = document.getElementById('questionsBoard');
+      reviewQuestionGroups.forEach((group, index) => {
+        const wrapper = document.createElement('section');
+        wrapper.className = 'question-accordion';
+        const questions = group.questions.map((question) => `<li>${question}</li>`).join('');
+        wrapper.innerHTML = `
+          <button class="question-toggle" type="button" aria-expanded="false">
+            <span class="question-chevron">›</span>
+            <span class="question-title">${group.title}</span>
+            <span class="question-count">${group.questions.length} questions</span>
+          </button>
+          <div class="question-panel">
+            <div class="question-context">${group.context}</div>
+            <ul class="review-question-list">${questions}</ul>
+          </div>
+        `;
+        const toggle = wrapper.querySelector('.question-toggle');
+        toggle.addEventListener('click', () => {
+          const isOpen = wrapper.classList.toggle('open');
+          toggle.setAttribute('aria-expanded', String(isOpen));
+        });
+        if (index === 0) {
+          wrapper.classList.add('open');
+          toggle.setAttribute('aria-expanded', 'true');
+        }
+        root.appendChild(wrapper);
+      });
+    }
+
+    function renderProcessWalkthrough() {
+      const processRoot = document.getElementById('processBoard');
+      processWalkthrough.forEach((item) => {
+        const wrapper = document.createElement('section');
+        wrapper.className = 'process-card';
+        const badges = item.badges.map((badge) => `<span class="badge ${badge.cls}">${badge.text}</span>`).join('');
+        const makeList = (items, cls) => `<ul class="${cls}">${items.map((entry) => `<li>${entry}</li>`).join('')}</ul>`;
+        wrapper.innerHTML = `
+          <div class="process-header">
+            <div class="card-title">${item.title}</div>
+            <div class="badges">${badges}</div>
+          </div>
+          <div class="process-grid">
+            <div class="process-cell current">
+              <div class="cell-label">Current ADW Process</div>
+              ${makeList(item.current, 'step-list')}
+              <div class="step-highlight manual">${item.manualNote}</div>
+            </div>
+            <div class="process-cell future">
+              <div class="cell-label">New Moirai Process</div>
+              ${makeList(item.future, 'step-list')}
+              <div class="step-highlight future">${item.futureNote}</div>
+            </div>
+            <div class="process-cell automation">
+              <div class="cell-label">Automation / Streamlining Introduced</div>
+              ${makeList(item.automation, 'automation-list')}
+              <div class="step-highlight auto">${item.autoNote}</div>
+            </div>
+          </div>
+        `;
+        processRoot.appendChild(wrapper);
+      });
+    }
+
+    renderCurrentWorkflow();
+    renderCascadeFlow();
+    renderProcessWalkthrough();
+    renderReviewQuestions();
+  </script>
+</body>
+</html>
