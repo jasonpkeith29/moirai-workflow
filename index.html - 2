@@ -1,0 +1,2768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moirai Workflow Comparison</title>
+  <style>
+    :root {
+      --page-bg: #f8fafc;
+      --surface: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-soft: #94a3b8;
+      --border: #e2e8f0;
+      --automation-bg: #ecfeff;
+      --automation-border: #67e8f9;
+      --manual-border: #fdba74;
+      --new-border: #93c5fd;
+      --shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+      --orange: #ea580c;
+      --blue: #2563eb;
+      --indigo: #4f46e5;
+      --teal: #0f766e;
+      --slate: #1e293b;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--page-bg);
+      color: var(--text-main);
+    }
+    .page {
+      max-width: 1360px;
+      margin: 0 auto;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .header { margin-bottom: 18px; }
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .header p {
+      margin: 6px 0 0;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.5;
+      max-width: 1000px;
+    }
+
+    .hero-story {
+      margin: 10px 0 18px;
+      padding: 22px 24px;
+      border-radius: 16px;
+      border: 1px solid #bfdbfe;
+      background: linear-gradient(135deg, #eff6ff 0%, #ffffff 60%, #ecfeff 100%);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+    }
+    .hero-story-label {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .hero-story-title {
+      margin: 0 0 10px;
+      font-size: 28px;
+      line-height: 1.18;
+      font-weight: 800;
+      color: var(--text-main);
+      max-width: 1180px;
+    }
+    .hero-story-copy {
+      margin: 0;
+      max-width: 1120px;
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+    .story-cluster {
+      margin-bottom: 18px;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      box-shadow: var(--shadow);
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .summary-card,
+    .workflow-card,
+    .persona-journey-card,
+    .merge-card,
+    .process-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .summary-card {
+      position: relative;
+      padding: 18px 18px 16px;
+      overflow: hidden;
+      min-height: 190px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .summary-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      height: 5px;
+      background: var(--card-accent, var(--slate));
+    }
+    .summary-card.current {
+      background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+      --card-accent: #ea580c;
+    }
+    .summary-card.pain {
+      background: linear-gradient(180deg, #fef2f2 0%, #ffffff 100%);
+      --card-accent: #dc2626;
+    }
+    .summary-card.progress {
+      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+      --card-accent: #2563eb;
+    }
+    .summary-card.gap {
+      background: linear-gradient(180deg, #ecfeff 0%, #ffffff 100%);
+      --card-accent: #0f766e;
+    }
+    .summary-icon {
+      font-size: 22px;
+      line-height: 1;
+    }
+    .summary-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 2px;
+    }
+    .summary-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+    .summary-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+    .summary-takeaway {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid rgba(148, 163, 184, 0.22);
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .section-title {
+      margin: 28px 0 12px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .section-subtitle {
+      margin: -4px 0 14px;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.5;
+      max-width: 1020px;
+    }
+
+    .workflow-header,
+    .persona-header,
+    .merge-header,
+    .process-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+      flex-wrap: wrap;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .header-note {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .badges {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge.manual { background: #ffedd5; color: #9a3412; }
+    .badge.automation { background: #cffafe; color: #155e75; }
+    .badge.high { background: #dcfce7; color: #166534; }
+    .badge.stronger { background: #dbeafe; color: #1d4ed8; }
+    .badge.persona { background: #e0e7ff; color: #4338ca; }
+
+    .workflow-steps,
+    .merge-steps {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      gap: 8px;
+      padding: 12px;
+      align-items: stretch;
+    }
+    .workflow-step,
+    .merge-step,
+    .journey-step {
+      position: relative;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--step-accent);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .workflow-step.current {
+      background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+      min-height: 176px;
+    }
+    .workflow-step:not(:last-child)::after,
+    .merge-step:not(:last-child)::after,
+    .journey-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-soft);
+      font-size: 16px;
+      font-weight: 700;
+      z-index: 2;
+    }
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--step-accent);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .step-name {
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.32;
+      margin-bottom: 5px;
+    }
+    .step-copy {
+      font-size: 10px;
+      line-height: 1.45;
+      color: var(--text-main);
+    }
+    .step-tag {
+      display: inline-block;
+      width: fit-content;
+      margin-top: auto;
+      padding: 4px 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: #ecfeff;
+      color: #155e75;
+      border: 1px solid #67e8f9;
+    }
+    .step-tag.manual {
+      background: #fff1e6;
+      color: #9a3412;
+      border: 1px solid #fdba74;
+    }
+
+    .cascade-flow {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .cascade-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+      flex-wrap: wrap;
+    }
+    .cascade-body {
+      padding: 18px;
+      background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    }
+    .entry-lanes {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      position: relative;
+    }
+    .entry-lane {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .entry-lane-card,
+    .shared-step {
+      position: relative;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--step-accent);
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+    }
+    .entry-lane-card {
+      min-height: 176px;
+      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+    }
+    .entry-title {
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+    .entry-copy {
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+    .entry-tag,
+    .shared-tag {
+      display: inline-block;
+      width: fit-content;
+      margin-top: auto;
+      padding: 4px 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: #ecfeff;
+      color: #155e75;
+      border: 1px solid #67e8f9;
+    }
+    .merge-hub {
+      max-width: 520px;
+      margin: 34px auto 0;
+      padding: 13px 16px;
+      border-radius: 12px;
+      background: #ecfeff;
+      border: 1px solid #67e8f9;
+      color: #155e75;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.5;
+      font-weight: 800;
+      position: relative;
+    }
+    .merge-hub::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -34px;
+      width: 1px;
+      height: 34px;
+      background: #94a3b8;
+    }
+    .merge-hub::after {
+      content: "↓";
+      position: absolute;
+      left: 50%;
+      bottom: -26px;
+      transform: translateX(-50%);
+      color: var(--text-soft);
+      font-size: 20px;
+      font-weight: 800;
+    }
+    .entry-lanes::after {
+      content: "";
+      position: absolute;
+      left: calc(16.666% + 7px);
+      right: calc(16.666% + 7px);
+      bottom: -18px;
+      height: 1px;
+      background: #94a3b8;
+    }
+    .entry-lane::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -18px;
+      width: 1px;
+      height: 18px;
+      background: #94a3b8;
+    }
+    .shared-flow {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 42px;
+      align-items: stretch;
+    }
+    .shared-step {
+      min-height: 170px;
+      background: linear-gradient(180deg, #ecfeff 0%, #ffffff 100%);
+    }
+    .shared-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-soft);
+      font-size: 20px;
+      font-weight: 800;
+      z-index: 2;
+    }
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--step-accent);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .step-name {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+    .step-copy {
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+    .publish-split {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px dashed #94a3b8;
+    }
+    .publish-split-title {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+    .publish-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+    .publish-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+      border-top: 5px solid var(--publish-accent);
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 14px;
+      min-height: 190px;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+    }
+    .publish-card.preprod {
+      background: linear-gradient(180deg, #f0fdfa 0%, #ffffff 100%);
+    }
+    .publish-card.prod {
+      background: linear-gradient(180deg, #eef2ff 0%, #ffffff 100%);
+    }
+    .publish-title {
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+    .publish-copy {
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+    .publish-list {
+      margin: 0;
+      padding-left: 16px;
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+    .publish-list li + li {
+      margin-top: 4px;
+    }
+    .promotion-note {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #c4b5fd;
+      background: #f5f3ff;
+      color: #4c1d95;
+      font-size: 12px;
+      line-height: 1.5;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .flow-footnote {
+      margin-top: 16px;
+      padding: 12px 14px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .process-board {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .process-grid {
+      display: grid;
+      grid-template-columns: 1.02fr 1.02fr 0.96fr;
+      gap: 0;
+    }
+    .process-cell {
+      padding: 14px 16px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .process-grid .process-cell:nth-child(3n) {
+      border-right: none;
+    }
+    .process-cell.current {
+      background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+      border-top: 4px solid var(--manual-border);
+    }
+    .process-cell.future {
+      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+      border-top: 4px solid var(--new-border);
+    }
+    .process-cell.automation {
+      background: linear-gradient(180deg, var(--automation-bg) 0%, #ffffff 100%);
+      border-top: 4px solid var(--automation-border);
+    }
+    .cell-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .step-list,
+    .automation-list {
+      margin: 0;
+      padding-left: 16px;
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--text-main);
+    }
+    .step-list li + li,
+    .automation-list li + li {
+      margin-top: 5px;
+    }
+    .step-highlight {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+    .step-highlight.manual {
+      background: #fff1e6;
+      color: #9a3412;
+      border: 1px solid #fdba74;
+    }
+    .step-highlight.future {
+      background: #e8f1ff;
+      color: #1d4ed8;
+      border: 1px solid #93c5fd;
+    }
+    .step-highlight.auto {
+      background: #ecfeff;
+      color: #155e75;
+      border: 1px solid #67e8f9;
+    }
+    .gap-map {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 8px;
+    }
+    .gap-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .gap-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+      flex-wrap: wrap;
+    }
+    .gap-title {
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .gap-subtitle {
+      color: var(--text-muted);
+      font-size: 12px;
+      margin-left: auto;
+    }
+    .gap-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
+    }
+    .gap-cell {
+      padding: 14px 16px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .gap-grid .gap-cell:nth-child(4n) {
+      border-right: none;
+    }
+    .gap-cell.baseline {
+      background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+      border-top: 4px solid #c2410c;
+    }
+    .gap-cell.built {
+      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+      border-top: 4px solid #2563eb;
+    }
+    .gap-cell.validate {
+      background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+      border-top: 4px solid #ea580c;
+    }
+    .gap-cell.new {
+      background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+      border-top: 4px solid #16a34a;
+    }
+    .gap-label {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .gap-list {
+      margin: 0;
+      padding-left: 16px;
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--text-main);
+    }
+    .gap-list li + li {
+      margin-top: 5px;
+    }
+
+    .questions-board {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .question-accordion {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .question-toggle {
+      width: 100%;
+      border: 0;
+      background: #f8fafc;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-main);
+      font-family: inherit;
+    }
+    .question-toggle:hover {
+      background: #f1f5f9;
+    }
+    .question-title {
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .question-count {
+      margin-left: auto;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #0369a1;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .question-chevron {
+      color: var(--text-muted);
+      font-size: 16px;
+      font-weight: 900;
+      transition: transform 0.15s ease;
+    }
+    .question-accordion.open .question-chevron {
+      transform: rotate(90deg);
+    }
+    .question-panel {
+      display: none;
+      padding: 0 16px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .question-accordion.open .question-panel {
+      display: block;
+    }
+    .question-context {
+      margin: 12px 0;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #f8fafc;
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .review-question-list {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--text-main);
+    }
+    .review-question-list li + li {
+      margin-top: 6px;
+    }
+
+    .footer {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 12px;
+      margin-top: 18px;
+    }
+
+    .tabs-shell {
+      margin-bottom: 18px;
+    }
+    .tab-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+      padding-bottom: 4px;
+    }
+    .tab-button {
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--text-muted);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+      transition: all 0.15s ease;
+    }
+    .tab-button:hover {
+      border-color: #cbd5e1;
+      color: var(--text-main);
+    }
+    .tab-button.active {
+      background: var(--slate);
+      color: #ffffff;
+      border-color: var(--slate);
+    }
+    .tab-panel {
+      display: none;
+    }
+    .tab-panel.active {
+      display: block;
+    }
+    .story-grid,
+
+    .proposal-cluster {
+      margin-bottom: 18px;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      box-shadow: var(--shadow);
+    }
+    .proposal-flow-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .proposal-step {
+      position: relative;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      min-height: 210px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow: hidden;
+    }
+    .proposal-step::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 5px;
+      background: var(--proposal-accent, var(--slate));
+    }
+    .proposal-step.intake { --proposal-accent: #0ea5e9; background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%); }
+    .proposal-step.engine { --proposal-accent: #2563eb; background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%); }
+    .proposal-step.publish { --proposal-accent: #0f766e; background: linear-gradient(180deg, #ecfeff 0%, #ffffff 100%); }
+    .proposal-step.platform { --proposal-accent: #7c3aed; background: linear-gradient(180deg, #faf5ff 0%, #ffffff 100%); }
+    .proposal-step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: var(--proposal-accent, var(--slate));
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .proposal-step-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+    }
+    .proposal-step-title {
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.3;
+      color: var(--text-main);
+    }
+    .proposal-step-copy {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-muted);
+    }
+    .proposal-step-takeaway {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid rgba(148, 163, 184, 0.22);
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .proposal-bridge {
+      margin-top: 14px;
+      padding: 18px 20px;
+      border-radius: 14px;
+      border: 1px solid #bfdbfe;
+      background: linear-gradient(135deg, #eff6ff 0%, #ffffff 65%, #ecfeff 100%);
+    }
+    .proposal-bridge h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+    .proposal-bridge p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.6;
+      max-width: none;
+      width: 100%;
+    }
+
+    .strategy-grid,
+    .decision-grid,
+    .phase-grid,
+    .accountability-problem-grid,
+    .accountability-role-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .story-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .strategy-grid,
+    .phase-grid,
+    .accountability-problem-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .decision-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .accountability-role-grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+    .story-card,
+    .strategy-card,
+    .decision-card,
+    .phase-card,
+    .wide-callout {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+    .story-card,
+    .strategy-card,
+    .decision-card,
+    .phase-card {
+      padding: 16px;
+    }
+    .story-card h3,
+    .strategy-card h3,
+    .decision-card h3,
+    .phase-card h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+    .story-card p,
+    .strategy-card p,
+    .decision-card p,
+    .phase-card p,
+    .wide-callout p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .story-list,
+    .strategy-list,
+    .decision-list,
+    .phase-list {
+      margin: 10px 0 0;
+      padding-left: 18px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-main);
+    }
+    .story-list li + li,
+    .strategy-list li + li,
+    .decision-list li + li,
+    .phase-list li + li {
+      margin-top: 6px;
+    }
+    .wide-callout {
+      margin-top: 14px;
+      padding: 16px 18px;
+      border-left: 4px solid var(--teal);
+      background: linear-gradient(180deg, #ecfeff 0%, #ffffff 100%);
+    }
+    .wide-callout h3 {
+      margin: 0 0 6px;
+      font-size: 15px;
+    }
+    .wide-callout .story-list {
+      margin-top: 10px;
+    }
+    .phase-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: var(--slate);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .phase-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 228px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: linear-gradient(180deg, var(--phase-bg, #f8fafc) 0%, #ffffff 100%);
+    }
+    .phase-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      height: 5px;
+      background: var(--phase-accent, var(--slate));
+    }
+    .phase-card.plan-1 {
+      --phase-accent: #2563eb;
+      --phase-bg: #eff6ff;
+    }
+    .phase-card.plan-2 {
+      --phase-accent: #0f766e;
+      --phase-bg: #ecfeff;
+    }
+    .phase-card.plan-3 {
+      --phase-accent: #7c3aed;
+      --phase-bg: #faf5ff;
+    }
+    .phase-card.plan-4 {
+      --phase-accent: #ea580c;
+      --phase-bg: #fff7ed;
+    }
+    .phase-kicker {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+    }
+    .phase-takeaway {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid rgba(148, 163, 184, 0.22);
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+    .next-steps-decision-cluster {
+      margin-top: 14px;
+    }
+    .tab-section-intro {
+      margin-bottom: 16px;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.6;
+      max-width: 1040px;
+    }
+
+    .narrative-bridge {
+      margin: 18px 0 16px;
+      padding: 18px 20px;
+      border-radius: 14px;
+      border: 1px solid #bfdbfe;
+      background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+      box-shadow: var(--shadow);
+    }
+    .narrative-bridge-title {
+      margin: 0 0 8px;
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.3;
+      color: var(--text-main);
+    }
+    .narrative-bridge-copy {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--text-muted);
+      max-width: 1040px;
+    }
+    .accountability-problem-card,
+    .accountability-role-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .accountability-problem-card::before,
+    .accountability-role-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      height: 5px;
+      background: var(--accountability-accent, var(--slate));
+    }
+    .accountability-problem-card {
+      min-height: 198px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: linear-gradient(180deg, var(--accountability-bg, #f8fafc) 0%, #ffffff 100%);
+    }
+    .accountability-problem-card.burden {
+      --accountability-accent: #dc2626;
+      --accountability-bg: #fef2f2;
+    }
+    .accountability-problem-card.engineering {
+      --accountability-accent: #2563eb;
+      --accountability-bg: #eff6ff;
+    }
+    .accountability-problem-card.governance {
+      --accountability-accent: #0f766e;
+      --accountability-bg: #ecfeff;
+    }
+    .accountability-problem-card.owner {
+      --accountability-accent: #7c3aed;
+      --accountability-bg: #faf5ff;
+    }
+    .accountability-role-card {
+      min-height: 470px;
+      display: grid;
+      grid-template-rows: auto 118px 196px 72px;
+      gap: 10px;
+      background: linear-gradient(180deg, var(--accountability-bg, #f8fafc) 0%, #ffffff 100%);
+      border-top: 4px solid var(--accountability-accent, var(--slate));
+    }
+    .accountability-role-summary {
+      height: 118px;
+      display: grid;
+      grid-template-rows: 30px 52px 24px;
+      gap: 6px;
+      align-items: start;
+    }
+    .accountability-role-summary h3,
+    .accountability-role-summary p,
+    .accountability-owner-chip {
+      margin: 0;
+    }
+    .accountability-owner-chip {
+      align-self: start;
+    }
+    .accountability-role-list {
+      height: 196px;
+      margin-top: 0;
+      overflow: hidden;
+    }
+    .accountability-role-footer {
+      height: 72px;
+      display: flex;
+      align-items: flex-start;
+      margin-top: 0;
+      padding-top: 10px;
+    }
+    .accountability-role-card.product {
+      --accountability-accent: #2563eb;
+      --accountability-bg: #eff6ff;
+    }
+    .accountability-role-card.analytics {
+      --accountability-accent: #0f766e;
+      --accountability-bg: #ecfeff;
+    }
+    .accountability-role-card.architect {
+      --accountability-accent: #7c3aed;
+      --accountability-bg: #faf5ff;
+    }
+    .accountability-role-card.engineering {
+      --accountability-accent: #ea580c;
+      --accountability-bg: #fff7ed;
+    }
+    .accountability-role-card.automation {
+      --accountability-accent: #0f172a;
+      --accountability-bg: #f8fafc;
+    }
+    .accountability-card-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .accountability-icon {
+      font-size: 18px;
+      line-height: 1;
+    }
+    .accountability-kicker,
+    .accountability-role-kicker {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+    }
+    .accountability-owner-chip {
+      display: inline-flex;
+      width: fit-content;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      color: var(--text-main);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .accountability-role-footer {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid rgba(148, 163, 184, 0.22);
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+    .accountability-decision-cluster {
+      margin-top: 14px;
+    }
+    .subsection-title {
+      margin: 24px 0 8px;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .subsection-copy {
+      margin: 0 0 12px;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.55;
+      max-width: 980px;
+    }
+
+
+    .workflow-problem-cluster {
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      box-shadow: var(--shadow);
+    }
+    .workflow-problem-cluster .subsection-title {
+      margin-top: 0;
+    }
+    .workflow-problem-cluster .workflow-card {
+      margin-top: 12px;
+    }
+    .diagnostic-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+      margin-bottom: 12px;
+    }
+    .diagnostic-card {
+      background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+      border: 1px solid #fdba74;
+      border-top: 4px solid #ea580c;
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+    }
+    .diagnostic-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #9a3412;
+      margin-bottom: 6px;
+    }
+    .diagnostic-copy {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .pain-breakdown-cluster {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      box-shadow: var(--shadow);
+    }
+    .pain-breakdown-cluster .subsection-title {
+      margin-top: 0;
+    }
+    .org-problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+      margin-bottom: 10px;
+    }
+    .org-problem-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+    .org-problem-card h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+    .org-problem-card p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .stakeholder-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+      margin-bottom: 10px;
+    }
+    .stakeholder-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .stakeholder-header {
+      padding: 14px 16px;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+    .stakeholder-card.product .stakeholder-header {
+      background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+    }
+    .stakeholder-card.data .stakeholder-header {
+      background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+    }
+    .stakeholder-card.analytics .stakeholder-header {
+      background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    }
+    .stakeholder-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .stakeholder-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+    }
+    .stakeholder-copy {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-muted);
+    }
+    .stakeholder-list {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-main);
+    }
+    .stakeholder-list li + li {
+      margin-top: 6px;
+    }
+
+
+
+
+
+
+    /* Align all pill/tag containers to a consistent baseline within each card. */
+    .workflow-step,
+    .entry-lane-card,
+    .shared-step,
+    .process-cell {
+      display: flex;
+      flex-direction: column;
+    }
+    .step-tag,
+    .entry-tag,
+    .shared-tag,
+    .step-highlight {
+      margin-top: auto;
+      align-self: flex-start;
+    }
+    .step-copy,
+    .entry-copy,
+    .publish-copy,
+    .step-list,
+    .automation-list {
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 1260px) {
+      .summary-grid,
+      .story-grid,
+      .strategy-grid,
+      .decision-grid,
+      .phase-grid,
+      .diagnostic-grid,
+      .org-problem-grid,
+      .stakeholder-grid,
+      .proposal-flow-grid,
+      .accountability-problem-grid,
+      .accountability-role-grid,
+      .workflow-steps,
+      .entry-lanes,
+      .shared-flow,
+      .publish-grid,
+      .process-grid {
+        grid-template-columns: 1fr;
+      }
+      .workflow-step:not(:last-child)::after,
+      .shared-step:not(:last-child)::after {
+        display: none;
+      }
+      .process-grid .process-cell {
+        border-right: none;
+      }
+    }
+    @media (max-width: 720px) {
+      .page { padding: 16px; }
+      .summary-grid, .story-grid, .strategy-grid, .decision-grid, .phase-grid, .diagnostic-grid, .org-problem-grid, .stakeholder-grid, .proposal-flow-grid, .accountability-problem-grid, .accountability-role-grid { grid-template-columns: 1fr; }
+      .hero-story-title { font-size: 22px; }
+      .hero-story-copy { font-size: 14px; }
+      .header-note,
+      .badges { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="eyebrow">Platform Story</div>
+      <div class="hero-story">
+        <div class="hero-story-label">Why This Matters</div>
+        <h1 class="hero-story-title">ADW is a critical enterprise data foundation. The way data is added, governed, and maintained within it now needs to scale like the asset itself.</h1>
+        <p class="hero-story-copy">ADW is more than a warehouse or reporting destination. It supports trusted analytics, executive reporting, downstream decisions, and future AI use cases. The challenge is not simply that one workflow is too manual. The challenge is that a critical enterprise asset is still being expanded and governed through a model that depends too heavily on manual coordination, expert knowledge, and fragmented workflow patterns. This page explains why that matters, what automation already exists, and why a shared ingestion and governance platform is the strategic next step.</p>
+      </div>
+    </header>
+
+    <div class="tabs-shell">
+      <div class="tab-bar" role="tablist" aria-label="Narrative sections">
+        <button class="tab-button active" type="button" role="tab" aria-selected="true" data-tab-target="problemTab">Current State</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab-target="strategyTab">What We&apos;re Proposing</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab-target="workflowTab">Current vs Future Workflow</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab-target="gapTab">What We Have vs What We Need</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab-target="accountabilityTab">Roles and Accountability</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab-target="nextStepsTab">Next Steps</button>
+      </div>
+
+      <section class="tab-panel active" id="problemTab" role="tabpanel">
+        <section class="story-cluster" aria-label="High-level platform story">
+          <section class="summary-grid" aria-label="Current state story strip">
+          <div class="summary-card current">
+            <div class="summary-icon">🧭</div>
+            <div class="summary-label">What ADW Is</div>
+            <div class="summary-title">A Shared Enterprise Data Foundation</div>
+            <div class="summary-value">ADW supports trusted analytics, executive reporting, shared data assets, downstream consumers, and future AI use cases. The way data enters and is governed within ADW therefore matters to far more than one delivery team.</div>
+            <div class="summary-takeaway">Story point: ADW is strategic infrastructure, not just a reporting destination.</div>
+          </div>
+          <div class="summary-card pain">
+            <div class="summary-icon">⚠️</div>
+            <div class="summary-label">The Strategic Problem</div>
+            <div class="summary-title">The Operating Model Does Not Scale Cleanly</div>
+            <div class="summary-value">Trusted outcomes still depend too heavily on manual coordination, expert knowledge, fragmented workflow patterns, and after-the-fact governance. That creates drag for analytics and risk for the broader enterprise data foundation.</div>
+            <div class="summary-takeaway">Story point: this is a scale, trust, and operating-model problem.</div>
+          </div>
+          <div class="summary-card progress">
+            <div class="summary-icon">🛠️</div>
+            <div class="summary-label">What Exists Now</div>
+            <div class="summary-title">Meaningful Automation Is Already Underway</div>
+            <div class="summary-value">The analyst team has already built useful components such as ADW Process Assist, Knowledge Cards, artifact generation, and guarded deployment tooling. The opportunity is to evaluate and elevate that work into a broader platform foundation.</div>
+            <div class="summary-takeaway">Story point: we are not starting from zero, but we are not done either.</div>
+          </div>
+          <div class="summary-card gap">
+            <div class="summary-icon">🏗️</div>
+            <div class="summary-label">What We Need To Build</div>
+            <div class="summary-title">A Shared Ingestion And Governance Platform</div>
+            <div class="summary-value">The next step is to turn isolated workflow improvements into a reusable platform for ingestion, validation, publication, observability, and governance so enterprise data is easier to add, trust, reuse, and maintain over time.</div>
+            <div class="summary-takeaway">Story point: the answer is platform design, validation, and hardening.</div>
+          </div>
+          </section>
+          <section class="narrative-bridge">
+            <h2 class="narrative-bridge-title">The strategic issue is not that ADW is broken. It is that a critical enterprise data foundation is still being expanded and governed through a model that depends too heavily on people instead of platform behavior.</h2>
+            <p class="narrative-bridge-copy">That matters because ADW is shared infrastructure for trusted analytics, executive reporting, downstream consumption, and future AI use cases. If the operating model for adding and governing data does not scale, the company will keep paying for it in slower delivery, weaker reuse, and higher governance overhead.</p>
+          </section>
+        </section>
+
+
+        <section class="workflow-problem-cluster">
+          <h3 class="subsection-title">What the current model looks like in practice</h3>
+          <p class="subsection-copy">The workflow below is trustworthy, but it creates trust through heavy manual effort. These four problem areas are the real story: too many handoffs, too much human review, too much artifact assembly, and too much governance catch-up.</p>
+
+          <section class="diagnostic-grid" aria-label="Current workflow pain points">
+            <div class="diagnostic-card">
+              <div class="diagnostic-label">Too Many Handoffs</div>
+              <div class="diagnostic-copy">Work moves through too many people, approvals, and coordination steps before it becomes a trusted asset.</div>
+            </div>
+            <div class="diagnostic-card">
+              <div class="diagnostic-label">Too Much Human Review</div>
+              <div class="diagnostic-copy">Analysts and ADW owners spend too much time catching issues that should be detected or guided by the platform earlier.</div>
+            </div>
+            <div class="diagnostic-card">
+              <div class="diagnostic-label">Too Much Artifact Assembly</div>
+              <div class="diagnostic-copy">DDL, metadata, views, configs, and workflow mechanics are still assembled manually too often for standard work.</div>
+            </div>
+            <div class="diagnostic-card">
+              <div class="diagnostic-label">Too Much Governance Catch-Up</div>
+              <div class="diagnostic-copy">Metadata, catalog state, and trust signals are updated after the fact instead of being enforced as part of the workflow itself.</div>
+            </div>
+          </section>
+
+          <section class="workflow-card" id="currentWorkflowCardProblem"></section>
+          <div class="story-grid">
+            <section class="story-card">
+              <h3>Why it is not fit for purpose</h3>
+              <ul class="story-list">
+                <li>The workflow produces trusted output, but it relies on human coordination at nearly every stage rather than reusable platform behavior.</li>
+                <li>Too many steps depend on knowing the process, the standards, the reviewers, and the right implementation pattern before work can move forward cleanly.</li>
+                <li>That makes the process hard to scale, hard to onboard into, and expensive to repeat for every new dataset.</li>
+              </ul>
+            </section>
+            <section class="story-card">
+              <h3>What problems does it create?</h3>
+              <ul class="story-list">
+                <li>Analysts spend too much time preparing design artifacts, finding the right standards, and iterating through review cycles before work is ready.</li>
+                <li>ADW owners and model reviewers absorb a heavy burden of manual quality, metadata, and semantic review.</li>
+                <li>Engineering and platform teams repeat too much one-off build and deployment work instead of relying on reusable patterns.</li>
+                <li>Current DAG SDLC steps also create friction: users navigate sync and merge overhead, unclear checkpoints, and merge or incremental load patterns that require too much manual expertise.</li>
+              </ul>
+            </section>
+            <section class="story-card">
+              <h3>What has the analyst team already built?</h3>
+              <ul class="story-list">
+                <li>ADW Process Assist and Knowledge Cards to reduce knowledge gaps and improve design-review readiness.</li>
+                <li>Sigma Design Form and artifact-generation tooling to reduce manual DDL, view, and metadata assembly work.</li>
+                <li>Deployment DAG safeguards to make controlled movement toward production less dependent on fully manual execution.</li>
+              </ul>
+            </section>
+          </div>
+        </section>
+
+        <section class="pain-breakdown-cluster">
+          <h3 class="subsection-title">How the pain breaks down across the organization</h3>
+          <p class="subsection-copy">The problem is broader than analyst friction. Product, data, and analytics each experience the current operating model differently, but they all feel the cost of fragmented workflows, weak observability, tribal standards, and low reuse.</p>
+
+          <section class="stakeholder-grid" aria-label="Pain by stakeholder area">
+            <section class="stakeholder-card product">
+              <div class="stakeholder-header">Product</div>
+              <div class="stakeholder-body">
+                <div>
+                  <div class="stakeholder-label">How Product Feels The Pain</div>
+                  <div class="stakeholder-copy">Product teams depend on timely, trusted data to support roadmap decisions, customer insights, and feature measurement. The current process slows that feedback loop down.</div>
+                </div>
+                <ul class="stakeholder-list">
+                  <li>New datasets and changes take too long to move from request to usable asset.</li>
+                  <li>Trust and readiness are not always easy to interpret outside the expert team.</li>
+                  <li>Slow data delivery makes it harder to iterate on decisions and prove value quickly.</li>
+                </ul>
+              </div>
+            </section>
+            <section class="stakeholder-card data">
+              <div class="stakeholder-header">Data Platform / Governance</div>
+              <div class="stakeholder-body">
+                <div>
+                  <div class="stakeholder-label">How Data Feels The Pain</div>
+                  <div class="stakeholder-copy">Data and platform teams absorb the operational and governance cost of a workflow that relies too much on manual review, disconnected controls, and locally understood standards.</div>
+                </div>
+                <ul class="stakeholder-list">
+                  <li>Observability is fragmented across people, tickets, Confluence, metadata tables, and workflow tooling.</li>
+                  <li>Airflow patterns are too manually assembled and inconsistent for a platform that needs to scale cleanly.</li>
+                  <li>Key standards and semantic expectations live too much in tribal knowledge instead of enforceable platform behavior.</li>
+                </ul>
+              </div>
+            </section>
+            <section class="stakeholder-card analytics">
+              <div class="stakeholder-header">Analytics</div>
+              <div class="stakeholder-body">
+                <div>
+                  <div class="stakeholder-label">How Analytics Feels The Pain</div>
+                  <div class="stakeholder-copy">Analytics teams experience the workflow most directly through review loops, artifact preparation, and repeated process-navigation work before they can deliver usable data.</div>
+                </div>
+                <ul class="stakeholder-list">
+                  <li>Analysts spend too much time preparing artifacts and finding the right standards before work is review-ready.</li>
+                  <li>Quality and metadata expectations are strong, but often enforced late and manually.</li>
+                  <li>The same repetitive mechanics are recreated too often for standard dataset work.</li>
+                </ul>
+              </div>
+            </section>
+          </section>
+
+          <section class="org-problem-grid">
+            <section class="org-problem-card">
+              <h3>Limited Observability</h3>
+              <p>It is too hard to see workflow health, failure modes, SLA risk, metadata completeness, and quality status in one place. Too much context lives in people, tickets, and disconnected systems.</p>
+            </section>
+            <section class="org-problem-card">
+              <h3>Inefficient Airflow Patterns</h3>
+              <p>Airflow is often used as a manually assembled coordination layer rather than a lightweight, standardized orchestrator. That creates operational variance and brittle workflow patterns over time.</p>
+            </section>
+            <section class="org-problem-card">
+              <h3>Tribal Data Standards</h3>
+              <p>Key standards around modeling, metadata, and trusted publication are understood most deeply by the analyst team and ADW insiders, rather than being encoded into a shared platform.</p>
+            </section>
+            <section class="org-problem-card">
+              <h3>Slow Delivery</h3>
+              <p>When every new dataset requires heavy process navigation, review preparation, and custom assembly, product and analytics work takes longer to move from idea to usable asset.</p>
+            </section>
+            <section class="org-problem-card">
+              <h3>Governance That Does Not Scale Easily</h3>
+              <p>Governance exists, but too much of it is enforced after the fact through meetings, signoffs, and manual updates instead of system-level controls that scale across teams.</p>
+            </section>
+            <section class="org-problem-card">
+              <h3>Low Reusability Across Domains</h3>
+              <p>Without a shared platform pattern, each domain risks solving similar workflow, quality, and publication problems independently instead of building on a common foundation.</p>
+            </section>
+          </section>
+        </section>
+
+        <section class="wide-callout">
+          <h3>Why the current response is still not enough</h3>
+          <p>The current automation work is meaningful, but it does not yet answer the broader platform questions on its own. We have not fully aligned on the target operating model, the governance boundaries, the semantic-model controls, the publication rules, or the platform capabilities that should be shared across ADW and other future datasets.</p>
+          <ul class="story-list">
+            <li>Some current work should likely be retained and hardened.</li>
+            <li>Some current work needs validation before it can be trusted at scale.</li>
+            <li>Some important platform capabilities still need to be designed and built net new.</li>
+          </ul>
+        </section>
+
+        <section class="wide-callout">
+          <h3>What we need to solve now</h3>
+          <ul class="story-list">
+            <li>Align on a platform structure that reduces analyst friction without weakening trust, metadata discipline, or production governance.</li>
+            <li>Evaluate the analyst team’s current automation work in the context of a broader shared platform, not as isolated point solutions.</li>
+            <li>Define the missing capabilities needed to make the foundation reusable for ADW first and other governed datasets later.</li>
+          </ul>
+        </section>
+      </section>
+
+      <section class="tab-panel" id="strategyTab" role="tabpanel">
+        <p class="tab-section-intro">The proposal is not to replace governance with AI or to automate one narrow workflow in isolation. The proposal is to build a shared platform that supports different user types, standardizes the repeated mechanics, and preserves explicit governance where trust matters most.</p>
+
+        <section class="proposal-cluster" aria-label="Proposed platform story">
+          <div class="proposal-flow-grid">
+            <section class="proposal-step intake">
+              <div class="proposal-step-number">1</div>
+              <div class="proposal-step-label">Starting Point</div>
+              <div class="proposal-step-title">Persona-Aware Intake</div>
+              <div class="proposal-step-copy">Different users should not all enter the system the same way. Novice analysts, experienced analysts, builders, and consumers need different starting points that collapse into one governed delivery path.</div>
+              <div class="proposal-step-takeaway">Story point: meet users where they are, then normalize the work.</div>
+            </section>
+            <section class="proposal-step engine">
+              <div class="proposal-step-number">2</div>
+              <div class="proposal-step-label">Core Capability</div>
+              <div class="proposal-step-title">Shared Delivery Engine</div>
+              <div class="proposal-step-copy">Once a request is structured, the platform should handle validation, pattern routing, DAG generation, quality controls, deployment planning, and publish gating consistently.</div>
+              <div class="proposal-step-takeaway">Story point: replace repeated mechanics with platform behavior.</div>
+            </section>
+            <section class="proposal-step publish">
+              <div class="proposal-step-number">3</div>
+              <div class="proposal-step-label">Trust Model</div>
+              <div class="proposal-step-title">Governed Publication Model</div>
+              <div class="proposal-step-copy">The platform should make the distinction between Pre-Prod / Lane B and ADW Prod / Lane A explicit, with clear approval, metadata, trust, and promotion rules.</div>
+              <div class="proposal-step-takeaway">Story point: publication and trust should be system-visible, not implied.</div>
+            </section>
+            <section class="proposal-step platform">
+              <div class="proposal-step-number">4</div>
+              <div class="proposal-step-label">Long-Term Outcome</div>
+              <div class="proposal-step-title">Reusable Platform Foundation</div>
+              <div class="proposal-step-copy">The same foundation should support ADW first, then extend to other governed datasets and data-product workflows instead of creating one-off automation for each domain.</div>
+              <div class="proposal-step-takeaway">Story point: solve the enterprise pattern, not just the local workflow.</div>
+            </section>
+          </div>
+
+          <section class="proposal-bridge">
+            <h3>What the proposed technical solution actually includes, and why it matters</h3>
+            <p>In practical terms, this means structured submission paths tailored to different personas, validation and guided remediation before work becomes implementation effort, pattern-based generation of workflows and artifacts, controlled orchestration of Snowflake, EKS, dbt, and related compute, and publication controls that distinguish exploratory assets from certified enterprise assets. Just as importantly, the goal is to reduce or eliminate the amount of manual DAG construction and SDLC navigation that standard analysts and builders have to do themselves. This matters because a one-time ADW workflow improvement would reduce some pain, but it would not solve the broader organizational problem. A platform approach creates shared standards, repeatable quality controls, clearer trust signaling, and lower operational variance every time a new dataset is introduced.</p>
+          </section>
+        </section>
+
+        <h2 class="section-title">Proposed Moirai Workflow by User Persona</h2>
+        <p class="section-subtitle">This is the proposed operating model. The top-row personas are the true initiators of new work: analysts and builders. The platform absorbs that variation and turns it into one governed workflow for validation, orchestration, quality control, publication, and trust signaling. Some parts of this are already in motion; the goal is to turn them into a coherent platform pattern.</p>
+        <section class="cascade-flow" id="cascadeFlow"></section>
+      </section>
+
+      <section class="tab-panel" id="workflowTab" role="tabpanel">
+        <h2 class="section-title">Current ADW Workflow And Operating Comparison</h2>
+        <p class="section-subtitle">This tab focuses on where the current process feels heavy and how the proposed platform would simplify the work over time.</p>
+
+        <section class="wide-callout">
+          <h3>Where the current process gets hard</h3>
+          <p>Today&apos;s process makes people work through too many approvals, too many handoffs, and too many detailed setup steps just to move a dataset forward. More of that work should be handled by the platform instead of relying on people to navigate it manually.</p>
+        </section>
+
+        <h2 class="section-title">Process Walkthrough: Old vs New</h2>
+        <p class="section-subtitle">This section compares the current process to the proposed one step by step. The goal is to show where people are doing repetitive work today and where the platform could take that work on instead.</p>
+        <section class="process-board" id="processBoard"></section>
+      </section>
+
+      <section class="tab-panel" id="accountabilityTab" role="tabpanel">
+        <section class="story-cluster" aria-label="Roles and accountability story">
+          <section class="wide-callout">
+            <h3>The accountability model we need</h3>
+            <p>Analytics should inform the ideal workflow, the current pain points, and the data needs the platform must support. Product should own the workflow and the pilot. Engineering should build and support the platform. The data architect should help shape the design early. Automation should enforce the agreed rules consistently instead of relying on people to remember every step.</p>
+          </section>
+        </section>
+
+        <section class="proposal-cluster" aria-label="Current accountability gaps">
+          <h3 class="subsection-title">Where accountability is blurry today</h3>
+          <p class="subsection-copy">The current process creates confusion because too much practical workflow burden sits with analytics, reusable platform ownership is not always clear, and no single operating model owner is holding the full process together end to end.</p>
+          <div class="accountability-problem-grid">
+            <section class="story-card accountability-problem-card burden">
+              <div class="accountability-card-top">
+                <div class="accountability-icon">⚠️</div>
+                <div class="accountability-kicker">Current Gap</div>
+              </div>
+              <h3>Analytics Owns Too Much Workflow Burden</h3>
+              <p>Analysts and analytics leads are carrying too much of the practical work needed to move data assets forward, including process navigation and technical workaround design.</p>
+            </section>
+            <section class="story-card accountability-problem-card engineering">
+              <div class="accountability-card-top">
+                <div class="accountability-icon">🧩</div>
+                <div class="accountability-kicker">Current Gap</div>
+              </div>
+              <h3>Engineering Ownership Feels Reactive</h3>
+              <p>Engineering is involved, but not always as the clear owner of the reusable platform layer, workflow patterns, and long-term support model.</p>
+            </section>
+            <section class="story-card accountability-problem-card governance">
+              <div class="accountability-card-top">
+                <div class="accountability-icon">🛡️</div>
+                <div class="accountability-kicker">Current Gap</div>
+              </div>
+              <h3>Governance Exists But Is Hard To Enforce</h3>
+              <p>Approval and governance expectations are real, but too much of the burden still depends on people remembering steps, reviewers, and signoff paths.</p>
+            </section>
+            <section class="story-card accountability-problem-card owner">
+              <div class="accountability-card-top">
+                <div class="accountability-icon">🧭</div>
+                <div class="accountability-kicker">Current Gap</div>
+              </div>
+              <h3>No Single Workflow Owner</h3>
+              <p>Without one clear owner of the end-to-end workflow, teams end up solving local pain points without always aligning to one shared operating model.</p>
+            </section>
+          </div>
+        </section>
+
+        <section class="proposal-cluster" aria-label="Future accountability model">
+          <h3 class="subsection-title">What future-state accountability should look like</h3>
+          <p class="subsection-copy">The platform will only scale if each team has a clear role. The goal is not shared confusion. The goal is clear ownership, clear inputs, and automation enforcing the agreed rules.</p>
+          <div class="accountability-role-grid">
+            <section class="strategy-card accountability-role-card product">
+              <div class="accountability-card-top">
+                <div class="accountability-icon">🧭</div>
+                <div class="accountability-role-kicker">Future Owner</div>
+              </div>
+              <div class="accountability-role-summary">
+                <h3>Product</h3>
+                <p>Owns the end-to-end workflow and is accountable for the pilot.</p>
+                <div class="accountability-owner-chip">Owns workflow and pilot</div>
+              </div>
+              <ul class="strategy-list accountability-role-list">
+                <li>Owns workflow design, prioritization, and cross-team coordination.</li>
+                <li>Defines pilot scope, sequencing, and success criteria.</li>
+                <li>Owns and manages the engineering process required to stand up the platform components, including the pilot.</li>
+              </ul>
+              <div class="accountability-role-footer">Why it matters: someone has to own the full operating model, not just one step inside it.</div>
+            </section>
+            <section class="strategy-card accountability-role-card analytics">
+              <div class="accountability-card-top">
+                <div class="accountability-icon">📊</div>
+                <div class="accountability-role-kicker">Future Owner</div>
+              </div>
+              <div class="accountability-role-summary">
+                <h3>Analytics</h3>
+                <p>Informs the ideal workflow, current pain points, and the data-model intent the business needs.</p>
+                <div class="accountability-owner-chip">Owns inputs and rules</div>
+              </div>
+              <ul class="strategy-list accountability-role-list">
+                <li>Informs what needs to be built and what the asset must answer, in partnership with Product.</li>
+                <li>Informs governance and approval needs with the appropriate data stakeholders, in partnership with Product.</li>
+                <li>Should not own long-term platform mechanics or workflow infrastructure.</li>
+              </ul>
+              <div class="accountability-role-footer">Why it matters: the team closest to the business problem should shape the inputs and pain points the workflow needs to solve.</div>
+            </section>
+            <section class="strategy-card accountability-role-card architect">
+              <div class="accountability-card-top">
+                <div class="accountability-icon">🏗️</div>
+                <div class="accountability-role-kicker">Future Owner</div>
+              </div>
+              <div class="accountability-role-summary">
+                <h3>Data Architect</h3>
+                <p>Helps shape the design early and keeps the solution technically coherent.</p>
+                <div class="accountability-owner-chip">Owns design guardrails</div>
+              </div>
+              <ul class="strategy-list accountability-role-list">
+                <li>Bridges analytics intent, governance needs, and engineering design.</li>
+                <li>Helps define reusable patterns and technical guardrails.</li>
+                <li>Should not become the long-term owner of every workflow decision.</li>
+              </ul>
+              <div class="accountability-role-footer">Why it matters: early architectural guidance reduces the risk of building a local fix that does not scale.</div>
+            </section>
+            <section class="strategy-card accountability-role-card engineering">
+              <div class="accountability-card-top">
+                <div class="accountability-icon">⚙️</div>
+                <div class="accountability-role-kicker">Future Owner</div>
+              </div>
+              <div class="accountability-role-summary">
+                <h3>Engineering / Platform</h3>
+                <p>Owns the platform build work and long-term support model.</p>
+                <div class="accountability-owner-chip">Owns build and support</div>
+              </div>
+              <ul class="strategy-list accountability-role-list">
+                <li>Builds the reusable workflow, orchestration, enforcement, and support capabilities.</li>
+                <li>Owns platform reliability, observability, and maintainability over time.</li>
+                <li>Is accountable for the technical implementation of the platform layer.</li>
+              </ul>
+              <div class="accountability-role-footer">Why it matters: platform ownership has to live with the team that can build, run, and support it over time.</div>
+            </section>
+            <section class="strategy-card accountability-role-card automation">
+              <div class="accountability-card-top">
+                <div class="accountability-icon">🤖</div>
+                <div class="accountability-role-kicker">Enforcement Layer</div>
+              </div>
+              <div class="accountability-role-summary">
+                <h3>Automation</h3>
+                <p>Enforces the rules; it does not invent them.</p>
+                <div class="accountability-owner-chip">Enforces agreed rules</div>
+              </div>
+              <ul class="strategy-list accountability-role-list">
+                <li>Applies validation, approvals, and governance checks consistently.</li>
+                <li>Reduces reliance on people remembering the right steps.</li>
+                <li>Should not act as the owner of policy or final business judgment.</li>
+              </ul>
+              <div class="accountability-role-footer">Why it matters: automation creates consistency only when teams first agree on the rules it should enforce.</div>
+            </section>
+          </div>
+        </section>
+
+        <section class="wide-callout">
+          <h3>How decisions and enforcement should work</h3>
+          <ul class="story-list">
+            <li>Product owns the workflow and pilot outcomes.</li>
+            <li>Analytics informs what is needed, where the pain points are, and what the workflow must support, in partnership with Product.</li>
+            <li>Engineering builds the platform that makes those rules repeatable and supportable.</li>
+            <li>The data architect helps make sure the design is technically sound before it scales.</li>
+            <li>Automation enforces the defined rules consistently once the teams agree on them.</li>
+          </ul>
+        </section>
+
+      </section>
+
+      <section class="tab-panel" id="gapTab" role="tabpanel">
+        <h2 class="section-title">How We Move From Today to the Ideal State</h2>
+        <p class="section-subtitle">This section makes the transition explicit. For each capability, it separates the manual baseline we have now, what the analyst team has already built or is actively building, what must be validated or hardened before we trust it, and what still has to be built net new to reach the fuller Moirai vision.</p>
+        <section class="gap-map" id="gapMap"></section>
+      </section>
+
+      <section class="tab-panel" id="nextStepsTab" role="tabpanel">
+        <section class="story-cluster" aria-label="Next steps story">
+          <div class="hero-box">
+            <div class="hero-eyebrow">Execution Plan</div>
+            <h1>Move From Strategy To A Controlled Platform Pilot</h1>
+            <p>The goal is not to declare the future-state design finished. The goal is to validate the strongest current pieces, close the most important governance and quality gaps, and move into a controlled pilot that proves the platform can work in practice.</p>
+          </div>
+
+          <section class="wide-callout">
+            <h3>What this phase is really about</h3>
+            <p>This is the point where the organization turns a strong story into a practical plan. The near-term work should focus on validating what already exists, hardening what matters most, and proving the platform pattern in a small but meaningful way before it expands.</p>
+          </section>
+        </section>
+
+        <section class="proposal-cluster" aria-label="Next steps roadmap">
+          <h3 class="subsection-title">Recommended rollout path</h3>
+          <p class="subsection-copy">The safest and most credible path forward is staged. Each step builds confidence before the next one expands scope, trust, or technical responsibility.</p>
+
+          <div class="phase-grid">
+            <section class="phase-card plan-1">
+              <div class="phase-number">1</div>
+              <div class="phase-kicker">First Step</div>
+              <h3>Validate What Already Exists</h3>
+              <ul class="phase-list">
+                <li>Pressure-test ADW Process Assist, Knowledge Cards, artifact generation, and deployment DAG behavior against real analyst and modeler use cases.</li>
+                <li>Measure reduction in review loops, analyst time, and manual implementation work.</li>
+              </ul>
+              <div class="phase-takeaway">Focus: prove the current components are useful enough to keep and build on.</div>
+            </section>
+            <section class="phase-card plan-2">
+              <div class="phase-number">2</div>
+              <div class="phase-kicker">Control Layer</div>
+              <h3>Harden Governance and Trust Controls</h3>
+              <ul class="phase-list">
+                <li>Define approval boundaries, publish gates, metadata completeness rules, and Lane A versus Lane B trust signaling.</li>
+                <li>Clarify what remains deterministic and what is AI-assisted.</li>
+              </ul>
+              <div class="phase-takeaway">Focus: make sure faster workflow does not weaken trust, policy, or publication controls.</div>
+            </section>
+            <section class="phase-card plan-3">
+              <div class="phase-number">3</div>
+              <div class="phase-kicker">Pilot Stage</div>
+              <h3>Pilot the Platform Pattern</h3>
+              <ul class="phase-list">
+                <li>Start with a scoped set of standard ADW asset types where the benefit is high and governance risk is manageable.</li>
+                <li>Run the new workflow alongside the old one until success criteria are met.</li>
+              </ul>
+              <div class="phase-takeaway">Focus: prove the workflow works in the real world before wider rollout.</div>
+            </section>
+            <section class="phase-card plan-4">
+              <div class="phase-number">4</div>
+              <div class="phase-kicker">Scale Out</div>
+              <h3>Expand Beyond The First Use Case</h3>
+              <ul class="phase-list">
+                <li>Reuse the same platform foundation for additional governed datasets, publication paths, and domain-owned data products.</li>
+                <li>Avoid creating a one-off Product Analytics solution that cannot scale organizationally.</li>
+              </ul>
+              <div class="phase-takeaway">Focus: turn a successful pilot into a reusable enterprise capability.</div>
+            </section>
+          </div>
+        </section>
+
+        <section class="proposal-cluster next-steps-decision-cluster" aria-label="Next steps decisions">
+          <h3 class="subsection-title">What has to happen now</h3>
+          <p class="subsection-copy">A clear near-term plan should define what the organization is deciding, how success will be judged, and whose support is needed to move from concept to execution.</p>
+
+          <div class="decision-grid">
+            <section class="decision-card">
+              <h3>Decisions Needed Now</h3>
+              <ul class="decision-list">
+                <li>Agree on the pilot scope and which asset types are in bounds first.</li>
+                <li>Align on approval boundaries, ownership, and risk tolerance for early automation.</li>
+                <li>Decide which current analyst-team components are retained, hardened, or redesigned.</li>
+              </ul>
+            </section>
+            <section class="decision-card">
+              <h3>Success Criteria</h3>
+              <ul class="decision-list">
+                <li>Fewer review cycles before a design is ready.</li>
+                <li>Fewer manual artifact-generation and deployment steps for standard work.</li>
+                <li>Stronger metadata completeness, trust signaling, and quality visibility.</li>
+              </ul>
+            </section>
+            <section class="decision-card">
+              <h3>Buy-In We Need</h3>
+              <ul class="decision-list">
+                <li>Analyst team support that the workflow actually removes friction.</li>
+                <li>ADW owner confidence that governance and semantic integrity are preserved.</li>
+                <li>Platform and leadership support to fund the foundation as a shared capability, not a point solution.</li>
+              </ul>
+            </section>
+          </div>
+
+          <section class="wide-callout">
+            <h3>Most pressing open questions for the POC</h3>
+            <ul class="story-list">
+              <li>Which specific ADW asset types are in scope for the first pilot, and which are explicitly out of scope?</li>
+              <li>Which approvals and governance checks must stay human in the POC, and which can automation enforce directly?</li>
+              <li>What is the minimum metadata, quality, and trust information required before a pilot asset can be published?</li>
+              <li>Who supports the pilot day to day when a generated workflow fails, produces bad data, or needs rollback?</li>
+              <li>What measurable success criteria determine whether the pilot moves forward, pauses, or needs redesign?</li>
+              <li>How long should the pilot run alongside the current process before leadership decides whether to expand it?</li>
+            </ul>
+          </section>
+        </section>
+      </section>
+    </div>
+
+    <p class="footer">Use the tabs to move from problem statement to platform strategy, then into workflow detail, gap analysis, and concrete next steps.</p>
+  </div>
+
+  <script>
+    const currentWorkflow = {
+      title: "Current ADW Workflow",
+      note: "Many manual steps, many tools, and many human approvals",
+      steps: [
+        { n: 1, name: "Define Request", copy: "Clarify the request, gather the needed context, and align on who needs to be involved before the work can really begin.", accent: "#ea580c", tag: "Manual coordination" },
+        { n: 2, name: "Discover Existing Assets", copy: "Search the catalog, past work, and documentation to figure out what already exists and what needs to be built.", accent: "#ea580c", tag: "Manual discovery" },
+        { n: 3, name: "Design and Model Review", copy: "Prepare design materials, follow standards, and work through review rounds before the design is approved.", accent: "#ea580c", tag: "Manual review" },
+        { n: 4, name: "Build Tables, Views, and Jobs", copy: "Build the tables, views, workflow jobs, and supporting setup across several tools and systems.", accent: "#ea580c", tag: "Manual build" },
+        { n: 5, name: "Test in Dev and Staging", copy: "Test the work in lower environments, inspect the results, document what happened, and update the supporting materials.", accent: "#ea580c", tag: "Manual validation" },
+        { n: 6, name: "Create Deploy Ticket and Signoff", copy: "Open the required ticket, collect approvals, coordinate with the right people, and prepare the instructions for release.", accent: "#ea580c", tag: "Manual approvals" },
+        { n: 7, name: "Execute in Production", copy: "An approved person runs the production steps and records that the release happened correctly.", accent: "#ea580c", tag: "Manual execution" },
+        { n: 8, name: "Update Catalog and Trackers", copy: "Update the catalog, documentation, trackers, and status so the governance record catches up with the work that was delivered.", accent: "#ea580c", tag: "Manual governance" }
+      ]
+    };
+
+    const cascadeFlow = {
+      title: "New Moirai Workflow: Entry Workflows Cascade Into Shared Delivery",
+      note: "Different builder and analyst workflows first, common delivery workflow second",
+      entries: [
+        {
+          n: 1,
+          title: "Analyst New to ADW Workflow",
+          copy: "Low-code path for standard SQL-driven assets. The user provides source, target, SQL intent, and basic rules without needing Python or Airflow expertise.",
+          accent: "#0ea5e9",
+          tag: "Guided design path"
+        },
+        {
+          n: 2,
+          title: "Analyst Experienced in ADW Workflow",
+          copy: "Advanced configuration path for users who need richer transformations, domain-specific logic, or controlled customization of approved templates.",
+          accent: "#4f46e5",
+          tag: "Accelerated analyst path"
+        },
+        {
+          n: 3,
+          title: "Code-First / Complex Workflow",
+          copy: "Builder/engineer path for complex Python, dbt, Spark, AI, or scaffolded workflows that cannot be expressed as simple YAML alone but still benefit from shared standards and deployment controls.",
+          accent: "#7c3aed",
+          tag: "Scaffold path"
+        },
+      ],
+      merge: "Moirai absorbs the persona-specific request and converts it into one governed delivery workflow.",
+      shared: [
+        { n: 1, name: "Submit Structured Request", copy: "The request enters Moirai as YAML, advanced config, scaffold metadata, or a promotion/consumption signal.", accent: "#0f766e", tag: "Shared intake" },
+        { n: 2, name: "Validate and Guide", copy: "Pydantic and platform checks validate structure, required fields, naming, and readiness with remediation feedback.", accent: "#0f766e", tag: "Automation" },
+        { n: 3, name: "Route Pattern", copy: "Pattern Engine routes to Factory, Template, Scaffold, or promotion handling based on complexity and trust requirements.", accent: "#0f766e", tag: "Automation" },
+        { n: 4, name: "Generate DAG + Deployment Plan", copy: "Moirai generates the DAG, execution scaffolding, metadata hooks, quality controls, and a deployment plan rather than bypassing release controls.", accent: "#0f766e", tag: "Automation" },
+        { n: 5, name: "Execute Compute", copy: "Airflow orchestrates Snowflake, EKS, dbt, or other compute while keeping orchestration lightweight and standardized.", accent: "#0f766e", tag: "Standardized" },
+        { n: 6, name: "Run Quality Gates + Remediation", copy: "Rows, nulls, freshness, custom rules, standards, and failure notifications run before publication; failed checks return actionable remediation feedback.", accent: "#0f766e", tag: "Quality" },
+        { n: 7, name: "Approval / Publish Gate", copy: "The gate determines whether the asset can publish to Pre-Prod / Lane B, ADW Prod / Lane A, or must return for remediation before exposure.", accent: "#0f766e", tag: "Governance gate" }
+      ],
+      publishSplit: {
+        title: "Publish Path Splits After Approval Gate",
+        preprod: {
+          title: "Publish to Pre-Prod / Lane B",
+          copy: "Fast, domain-owned publication path for exploration, limited-domain use, and assets that are not yet certified for broad enterprise reuse.",
+          bullets: [
+            "Visible as non-certified or lower-trust in Catalog",
+            "Requires owner, lineage, quality status, and clear usage expectations",
+            "Optimized for speed-to-insight while preventing accidental certified consumption"
+          ]
+        },
+        prod: {
+          title: "Publish to ADW Prod / Lane A",
+          copy: "Certified, high-trust publication path for shared, mission-critical, executive, AI, or cross-team assets.",
+          bullets: [
+            "Requires stronger signoff and production readiness",
+            "Requires complete metadata, owner, lineage, SLA/status, and quality results",
+            "Published as certified or high-trust in the Catalog / ADW"
+          ]
+        },
+        promotion: "Promotion path: Pre-Prod / Lane B can move to ADW Prod / Lane A when it is reused by multiple teams, powers executive reporting, becomes mission-critical, requires a formal SLA, or needs certified catalog status."
+      },
+      footnote: "This shows the intended operating model: users do not all follow the same front-end path, but the platform normalizes the work into one shared delivery, quality, approval, publication, and governance process. Moirai automates repetitive mechanics; it should not remove required governance controls."
+    };
+
+    const gapMapItems = [
+      {
+        title: "AI Design Review and Analyst Guidance",
+        subtitle: "The analyst team is furthest along here.",
+        baseline: [
+          "Today the team relies on analyst experience, Confluence guidance, and repeated model-review cycles to catch ADW issues.",
+          "Knowledge gaps and unclear standards create repeated back-and-forth before a design is review-ready.",
+          "The current process has rigor, but most of the guidance is still human-driven and slow."
+        ],
+        built: [
+          "ADW Process Assist already exists as an analyst-facing copilot.",
+          "Knowledge Cards ground the assistant in ADW documentation.",
+          "Confluence state and unresolved flags help the team resume long-running reviews without losing context."
+        ],
+        validate: [
+          "Does it materially reduce review-loop count and time-to-ready design?",
+          "Are recommendations accurate enough to trust before formal model review?",
+          "Does the assistant escalate ambiguity instead of sounding confident when it should defer?"
+        ],
+        new: [
+          "Formal success metrics for design-review accuracy, rework reduction, and cycle-time savings.",
+          "A clear boundary between AI prep, analyst prep, and human model approval authority.",
+          "A documented exception path when AI guidance and modeler feedback disagree."
+        ]
+      },
+      {
+        title: "Artifact Generation and ADW_TEST Build Support",
+        subtitle: "Strong automation exists, but it is not yet the full ideal-state build path.",
+        baseline: [
+          "Today builders manually create DDL, views, metadata changes, test artifacts, and Airflow/deployment glue across several systems.",
+          "The old process depends heavily on analyst or engineer care to keep design, metadata, and implementation aligned.",
+          "Manual creation makes standard work slow and increases drift risk."
+        ],
+        built: [
+          "Sigma Design Form and add_all_adw_design_artifacts are already doing real implementation work.",
+          "Table DDL, view DDL, and ADW_TEST metadata merges can already be generated.",
+          "Testing helpers compare design intent against physical implementation during the build process."
+        ],
+        validate: [
+          "Are generated DDLs and metadata entries consistently correct across simple and edge-case assets?",
+          "Does the generated output align with ADW modeler expectations for dimensions, facts, naming, and semantic structure?",
+          "Does mismatch detection catch semantic errors, not just technical mismatches?"
+        ],
+        new: [
+          "Semantic-model validation against existing ADW concepts before new assets are created.",
+          "Automated reuse checks so existing enterprise dimensions or facts are reused instead of duplicated.",
+          "A formal approval path for generated metadata changes that create new enterprise concepts."
+        ]
+      },
+      {
+        title: "Deployment Automation and Production Controls",
+        subtitle: "There is real progress here, but this area will get the hardest scrutiny.",
+        baseline: [
+          "Today production movement depends on Jira tickets, signoff chains, executor coordination, and controlled manual execution.",
+          "The old process is trusted partly because deployment authority is clearly separated and auditable.",
+          "This is slow, but it prevents casual promotion into ADW production."
+        ],
+        built: [
+          "A deployment DAG already exists with BLSO enforcement, allowlists, print-only mode, target database control, destructive-statement blocking, and audit trail behavior.",
+          "The analyst team has already moved away from fully manual SQL execution in some scenarios.",
+          "This is more concrete than the original conceptual Moirai deployment story."
+        ],
+        validate: [
+          "Does it preserve developer, approver, and executor separation where policy requires it?",
+          "Is rollback or replay behavior safe, tested, and auditable?",
+          "Can it reliably distinguish pre-prod, prod, and high-trust publication paths?"
+        ],
+        new: [
+          "A clearly documented approval and publish gate tied to Lane A and Lane B rules.",
+          "Formal mapping from deployment behavior to SDLC, SOX, and HITRUST expectations.",
+          "An explicit production-readiness contract for ADW Prod publication."
+        ]
+      },
+      {
+        title: "DAG SDLC and Load-Pattern Support",
+        subtitle: "The workflow around DAG mechanics is one of the clearest places where the current model still asks too much of users.",
+        baseline: [
+          "Today the SDLC for DAG work includes approval checkpoints, sync and merge friction, and workflow steps that vary depending on environment and change type.",
+          "Merge and incremental load patterns are hard for standard analysts to implement safely and consistently.",
+          "Some staging and testing steps add real value, but the overall process is still too dependent on manual navigation."
+        ],
+        built: [
+          "The analyst team has already automated parts of the current DAG and deployment process and improved the DAG upload path.",
+          "Staging and testing environments are already delivering useful quality and troubleshooting value.",
+          "Parts of the pipeline are already automated; the issue is uneven workflow design and usability, not total absence of capability."
+        ],
+        validate: [
+          "Which SDLC checkpoints actually improve quality versus just adding friction?",
+          "Can merge and incremental load support be made reliable enough for broader self-service use?",
+          "Do current staging and validation behaviors fit all load patterns, especially merge-based jobs?"
+        ],
+        new: [
+          "More standardized orchestration patterns so users do less direct DAG construction.",
+          "Cleaner support for merge and incremental load patterns with clearer defaults and test logic.",
+          "A platform path that reduces the need for users to understand detailed SDLC mechanics just to deliver a trusted asset."
+        ]
+      },
+      {
+        title: "Runtime Quality Controls and Remediation",
+        subtitle: "This is one of the clearest gaps between the deck and the broader Moirai vision.",
+        baseline: [
+          "Today many quality checks are embedded in human review, analyst discipline, manual inspection, or asset-specific testing practices.",
+          "The current process catches issues, but it is inconsistent and expensive to repeat across every workflow.",
+          "Failure handling is often obvious to insiders but not systematized for every user."
+        ],
+        built: [
+          "The analyst-team work includes validation and testing support during artifact generation and deployment prep.",
+          "The deck implies safeguards, but it does not yet define a full runtime quality-control contract across all assets.",
+          "Some pieces exist, but not yet as a universal platform quality layer."
+        ],
+        validate: [
+          "How deep are the current checks beyond structural validation and build-time comparison?",
+          "Do users get actionable remediation guidance when runtime quality checks fail?",
+          "Is there enough coverage for business-rule validation, freshness, and semantic correctness?"
+        ],
+        new: [
+          "A standard runtime quality pack injected into every generated DAG.",
+          "Tiered quality controls for Lane B versus Lane A publication.",
+          "Writeback of quality failures, unresolved exceptions, and waiver state into governance surfaces."
+        ]
+      },
+      {
+        title: "Metadata, Catalog, and Trust Signaling",
+        subtitle: "The current deck improves workflow mechanics more than end-state trust signaling.",
+        baseline: [
+          "Today metadata, catalog updates, Confluence artifacts, and status tracking are important but often manual catch-up work.",
+          "The old process values governance, but visibility is fragmented across tools and depends on people keeping it current.",
+          "Consumers often rely on process discipline rather than system-enforced trust signaling."
+        ],
+        built: [
+          "The deck shows Confluence state, metadata model awareness, and review-ready artifacts rather than just code generation.",
+          "The analyst team is clearly thinking about traceability and documentation, not only build speed.",
+          "There is a stronger metadata mindset than a generic workflow-automation story would imply."
+        ],
+        validate: [
+          "Are owner, lineage, trust lane, SLA/status, and quality state consistently captured in current outputs?",
+          "Will downstream consumers clearly understand what is certified versus exploratory?",
+          "Can metadata stay current after changes, not just at initial creation?"
+        ],
+        new: [
+          "A true publish gate that requires metadata completeness before exposure.",
+          "Clear Lane B versus Lane A trust signaling in the catalog.",
+          "Explicit promotion logic based on reuse, executive reporting, mission criticality, and SLA need."
+        ]
+      },
+      {
+        title: "Persona-Specific Experience and Adoption",
+        subtitle: "The original Moirai plan is broader than the current analyst-team scope.",
+        baseline: [
+          "Today the workflow is not tailored well to different experience levels; the same heavy process is applied broadly.",
+          "Novice analysts pay a steep learning tax and experienced analysts still absorb avoidable coordination overhead.",
+          "Consumers mostly see the end result, not a clear trust/readiness story."
+        ],
+        built: [
+          "The deck clearly targets analyst pain and supports users with different ADW experience levels.",
+          "It provides a credible path for guided design review and assisted implementation prep.",
+          "It also hints at downstream value, but the strongest focus is still analyst productivity."
+        ],
+        validate: [
+          "Will novice analysts actually succeed with the guided flow without creating more confusion?",
+          "Does the experienced-analyst path truly save time rather than add ceremony?",
+          "Where do builders or engineers take over for edge cases, and who owns that support boundary?"
+        ],
+        new: [
+          "A more explicit builder and engineer operating path tied to complex scaffold workflows.",
+          "A consumer-facing trust layer that makes data readiness and certification easy to understand.",
+          "A migration plan that tells the analyst team what changes now, what stays the same, and what comes later."
+        ]
+      }
+    ];
+
+    const reviewQuestionGroups = [
+      {
+        title: "Governance and Approvals",
+        context: "The current process is slow partly because it enforces accountability. Expect reviewers to test whether Moirai preserves the right approval authority and audit controls.",
+        questions: [
+          "Which changes can be fully automated versus which still require human signoff?",
+          "Who approves Lane A / ADW Prod publication?",
+          "Does Moirai preserve developer / approver / executor separation where required?",
+          "How does this satisfy SDLC, BLSO, audit, SOX, HITRUST, and production-access controls?",
+          "Can the AI Governor approve anything, or only recommend and triage?",
+          "Where does manual override happen, and how is it audited?"
+        ]
+      },
+      {
+        title: "Metadata and Semantic Model",
+        context: "The existing ADW process is deeply tied to semantic consistency. The team will push hard on whether Moirai handles meaning, not just pipeline mechanics.",
+        questions: [
+          "How does Moirai update or integrate with the ADW metadata model?",
+          "Does it generate table/view metadata automatically, and who validates it?",
+          "How are descriptions, class words, data types, nullability, dimensions, and measures enforced?",
+          "How does it prevent duplicate or conflicting business concepts?",
+          "Does it check for existing ADW dimensions, facts, degenerate dimensions, and business concepts before creating new ones?",
+          "When is formal data model review still mandatory?"
+        ]
+      },
+      {
+        title: "Quality and Testing",
+        context: "Quality gates cannot just mean generic row-count checks. Reviewers will expect technical, semantic, and business-rule quality controls.",
+        questions: [
+          "What default quality checks are injected into every DAG?",
+          "Who defines thresholds, and are they different for Lane A versus Lane B?",
+          "What happens when checks fail, and does the user receive remediation guidance?",
+          "Can checks be waived, who approves waivers, and are waivers visible later?",
+          "Are business-rule validations, referential integrity checks, dbt tests, and regression tests included?",
+          "Are quality results written back to the catalog or metadata layer?"
+        ]
+      },
+      {
+        title: "Pre-Prod vs Prod Publication",
+        context: "Lane B can become shadow production if the trust boundary is not clear. This is likely to be one of the most important governance discussions.",
+        questions: [
+          "How do you prevent Lane B / Pre-Prod assets from becoming unofficial production?",
+          "How is Lane B labeled in the catalog so consumers understand it is not certified?",
+          "Who can consume Lane B assets?",
+          "What are the promotion criteria from Lane B to Lane A?",
+          "What happens if an executive report or cross-team workflow starts using a Lane B asset?",
+          "Who approves promotion into ADW Prod / Lane A?"
+        ]
+      },
+      {
+        title: "AI Governor Boundaries",
+        context: "The AI Governor is novel and will attract scrutiny. The safest framing is AI as advisor and triage layer, not final certification authority.",
+        questions: [
+          "What exactly does the AI Governor review?",
+          "Which decisions are deterministic rules versus AI-assisted judgment?",
+          "Is there an audit trail of AI recommendations and decisions?",
+          "Can AI override a failed deterministic check?",
+          "How are false positives and false negatives handled?",
+          "What requires mandatory human review even if the AI Governor says it looks good?"
+        ]
+      },
+      {
+        title: "Operations, Ownership, and Support",
+        context: "Automation without clear ownership creates support ambiguity. Every generated pipeline still needs a human accountability model.",
+        questions: [
+          "Who owns a failed generated pipeline?",
+          "Who owns a bad data issue: analyst, builder, platform team, ADW team, or domain owner?",
+          "Who supports generated DAGs and template/scaffold failures?",
+          "What happens outside business hours?",
+          "What run metadata, logs, lineage, and replay information are captured?",
+          "What is the rollback or recovery plan after a bad publish?"
+        ]
+      },
+      {
+        title: "Cost, Security, and Audit",
+        context: "Self-service generation can create cost and access risk if guardrails are weak. The current process controls production tightly, and that concern will carry forward.",
+        questions: [
+          "How does Moirai prevent expensive Snowflake queries or runaway warehouse usage?",
+          "How are warehouses, Snowflake roles, EKS resources, secrets, and grants selected and controlled?",
+          "Which service account executes generated workflows?",
+          "How are write permissions to ADW Prod restricted?",
+          "How is every automated action audited end-to-end?",
+          "How do generated workflows comply with security, privacy, SOX, and HITRUST constraints?"
+        ]
+      },
+      {
+        title: "Migration Approach",
+        context: "Current process owners will want a safe adoption path, not a big-bang replacement of the governed ADW workflow.",
+        questions: [
+          "Does Moirai replace the current process immediately or run alongside it first?",
+          "Which asset types are in scope for the pilot?",
+          "What happens to existing ADW assets and existing Bitbucket/Jira/metadata workflows?",
+          "How do we avoid two competing processes?",
+          "What are the success metrics for the pilot?",
+          "Which process owners must sign off before expanding from pilot to production use?"
+        ]
+      }
+    ];
+
+    const processWalkthrough = [
+      {
+        title: "1. Request Intake and Scoping",
+        badges: [
+          { text: "Current Manual", cls: "manual" },
+          { text: "New Automation", cls: "automation" }
+        ],
+        current: [
+          "People spend time gathering context, checking requirements, and figuring out who needs to be involved before the work is clearly shaped.",
+          "Teams manually search the catalog, past work, and documentation to understand what already exists.",
+          "A lot depends on the person already knowing how the process works."
+        ],
+        future: [
+          "The person starting the work uses a guided entry path that fits their level of experience.",
+          "The platform quickly routes the request into a known path instead of making everyone navigate the process from scratch.",
+          "This lowers friction without removing the needed controls."
+        ],
+        automation: [
+          "The platform checks that the request includes the basic information it needs.",
+          "The request is automatically routed into the right delivery path.",
+          "Teams can get an early readiness summary before deeper review begins."
+        ],
+        manualNote: "Today, too much time is spent just getting work pointed in the right direction.",
+        futureNote: "The new process makes it easier to get started correctly the first time.",
+        autoNote: "Best first win: replace manual process navigation with guided submission and early feedback."
+      },
+      {
+        title: "2. Validation and Design Readiness",
+        badges: [
+          { text: "Cycle Time Win", cls: "high" },
+          { text: "Automation Opportunity", cls: "automation" }
+        ],
+        current: [
+          "Teams review naming, structure, metadata, and readiness through documents, meetings, and repeated review cycles.",
+          "Problems are often found after work has already started, which creates rework and delays.",
+          "The checks exist, but users do not always get fast, clear guidance on how to fix issues."
+        ],
+        future: [
+          "The platform checks for common issues early, before people spend time building the wrong thing.",
+          "Incomplete requests can be stopped before they become implementation work.",
+          "Users get immediate guidance instead of waiting for the next review meeting."
+        ],
+        automation: [
+          "The platform can check required fields, naming, and basic structure automatically.",
+          "It can show example fixes when information is missing or formatted incorrectly.",
+          "It can separate true blockers from lower-priority issues."
+        ],
+        manualNote: "Today, experts spend time catching issues that could have been flagged much earlier.",
+        futureNote: "The new process brings common problems forward instead of discovering them late.",
+        autoNote: "Highest leverage area: fail fast and show people how to fix issues right away."
+      },
+      {
+        title: "3. Build and Workflow Construction",
+        badges: [
+          { text: "Manual Load High", cls: "manual" },
+          { text: "Automation High", cls: "automation" }
+        ],
+        current: [
+          "Teams manually assemble tables, views, workflow jobs, test setup, and supporting records across several tools.",
+          "Even when examples exist, the work still depends heavily on individual skill and consistency.",
+          "The same basic setup work is repeated again and again for standard requests."
+        ],
+        future: [
+          "The platform builds more of the standard workflow structure automatically.",
+          "Common patterns can be reused instead of recreated each time.",
+          "People spend more time on real exceptions and less time on repetitive setup."
+        ],
+        automation: [
+          "The platform can generate repeatable workflow structure for common cases.",
+          "It can add standard checks and default settings automatically.",
+          "It can create a starting point for common asset types instead of making people build from scratch."
+        ],
+        manualNote: "Today, standard work still requires too much repeated hands-on assembly.",
+        futureNote: "The new process standardizes common build work instead of rebuilding it every time.",
+        autoNote: "This is one of the biggest opportunities to cut repetitive manual work."
+      },
+      {
+        title: "4. Review, Quality, and Exception Handling",
+        badges: [
+          { text: "Quality Gain", cls: "high" },
+          { text: "Guardrail Needed", cls: "guardrail" }
+        ],
+        current: [
+          "Quality is taken seriously, but many of the checks still depend on people remembering what to review and when to review it.",
+          "Teams rely on signoff, manual inspection, business testing, and repeated feedback loops.",
+          "The quality bar is strong, but keeping it strong takes a lot of human effort."
+        ],
+        future: [
+          "More quality checks become part of the normal workflow instead of something people add manually.",
+          "Teams can be notified quickly when something fails.",
+          "Standard controls become the default rather than an extra effort."
+        ],
+        automation: [
+          "The platform can run standard checks automatically and return clear feedback when something fails.",
+          "It can alert the right people with useful failure details.",
+          "It can help sort routine issues before human review is needed."
+        ],
+        manualNote: "Today, consistent quality depends too much on disciplined people and repeated review effort.",
+        futureNote: "The new process makes quality part of the workflow, not just part of the culture.",
+        autoNote: "Important boundary: automation should support trust decisions, not quietly replace them."
+      },
+      {
+        title: "5. Deployment and Production Execution",
+        badges: [
+          { text: "Handoffs High", cls: "manual" },
+          { text: "Automation Medium", cls: "automation" }
+        ],
+        current: [
+          "Tickets, approvals, code movement, release coordination, and production execution create many handoffs.",
+          "That separation is useful for control, but it also adds waiting time and coordination overhead.",
+          "Even standard changes often move through a fairly heavy release process."
+        ],
+        future: [
+          "The platform makes standard release steps more consistent and easier to manage.",
+          "It can reduce one-off operational work while still preserving approvals for higher-risk changes.",
+          "More of the release process can be handled consistently without weakening control."
+        ],
+        automation: [
+          "The platform can standardize how common jobs are run, retried, and reviewed.",
+          "It can run readiness checks before higher-trust or production-bound releases move forward.",
+          "It can capture a clearer record of what happened from request through release."
+        ],
+        manualNote: "Today, control is achieved largely through people, tickets, and handoffs.",
+        futureNote: "The new process should keep the control while reducing the coordination burden.",
+        autoNote: "Best redesign target: automate standard release paths and keep tighter approvals for the highest-risk work."
+      },
+      {
+        title: "6. Publication, Catalog, and Ongoing Governance",
+        badges: [
+          { text: "Governance Gain", cls: "stronger" },
+          { text: "Automation Opportunity", cls: "automation" }
+        ],
+        current: [
+          "Catalog updates, documentation updates, tracking updates, and status signals are spread across multiple tools.",
+          "Governance exists, but it can be hard to see and hard to keep fully current.",
+          "Trust signals often catch up after the work is already done."
+        ],
+        future: [
+          "The new process makes a clear split between lower-trust publication and certified enterprise publication.",
+          "People can more easily tell what is exploratory versus what is trusted for broader use.",
+          "Visibility into metadata and trust status becomes part of the normal workflow."
+        ],
+        automation: [
+          "The platform can check that key metadata and quality information are present before broader publication.",
+          "It can capture ownership, lineage, and trust status more consistently.",
+          "It can support a clearer path from early-use assets to certified enterprise assets when they become more important."
+        ],
+        manualNote: "Today, governance is real but hard to see because it is spread across tools and follow-up steps.",
+        futureNote: "The new process can make trust and governance more visible and easier to enforce.",
+        autoNote: "Best next step: require the basics for trust and publication before an asset is broadly visible."
+      }
+    ];
+
+    function initTabs() {
+      const buttons = Array.from(document.querySelectorAll('.tab-button'));
+      const panels = Array.from(document.querySelectorAll('.tab-panel'));
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const target = button.getAttribute('data-tab-target');
+          buttons.forEach((item) => {
+            const active = item === button;
+            item.classList.toggle('active', active);
+            item.setAttribute('aria-selected', String(active));
+          });
+          panels.forEach((panel) => {
+            panel.classList.toggle('active', panel.id === target);
+          });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      });
+    }
+
+    function renderCurrentWorkflow() {
+      const targets = ['currentWorkflowCard', 'currentWorkflowCardProblem'].map((id) => document.getElementById(id)).filter(Boolean);
+      targets.forEach((root) => {
+      root.innerHTML = `
+        <div class="workflow-header">
+          <div class="card-title">${currentWorkflow.title}</div>
+          <div class="header-note">${currentWorkflow.note}</div>
+        </div>
+        <div class="workflow-steps"></div>
+      `;
+      const stepsRoot = root.querySelector('.workflow-steps');
+      currentWorkflow.steps.forEach((step) => {
+        const el = document.createElement('article');
+        el.className = 'workflow-step current';
+        el.style.setProperty('--step-accent', step.accent);
+        el.innerHTML = `
+          <div class="step-number">${step.n}</div>
+          <div class="step-name">${step.name}</div>
+          <div class="step-copy">${step.copy}</div>
+          <div class="step-tag manual">${step.tag}</div>
+        `;
+        stepsRoot.appendChild(el);
+      });
+      });
+    }
+
+    function renderCascadeFlow() {
+      const root = document.getElementById('cascadeFlow');
+      root.innerHTML = `
+        <div class="cascade-header">
+          <div class="card-title">${cascadeFlow.title}</div>
+          <div class="header-note">${cascadeFlow.note}</div>
+        </div>
+        <div class="cascade-body">
+          <div class="entry-lanes"></div>
+          <div class="merge-hub">${cascadeFlow.merge}</div>
+          <div class="shared-flow"></div>
+          <div class="publish-split"></div>
+          <div class="flow-footnote">${cascadeFlow.footnote}</div>
+        </div>
+      `;
+
+      const entries = root.querySelector('.entry-lanes');
+      cascadeFlow.entries.forEach((entry) => {
+        const lane = document.createElement('section');
+        lane.className = 'entry-lane';
+        lane.innerHTML = `
+          <article class="entry-lane-card" style="--step-accent:${entry.accent};">
+            <div class="step-number">${entry.n}</div>
+            <div class="entry-title">${entry.title}</div>
+            <div class="entry-copy">${entry.copy}</div>
+            <div class="entry-tag">${entry.tag}</div>
+          </article>
+        `;
+        entries.appendChild(lane);
+      });
+
+      const shared = root.querySelector('.shared-flow');
+      cascadeFlow.shared.forEach((step) => {
+        const el = document.createElement('article');
+        el.className = 'shared-step';
+        el.style.setProperty('--step-accent', step.accent);
+        el.innerHTML = `
+          <div class="step-number">${step.n}</div>
+          <div class="step-name">${step.name}</div>
+          <div class="step-copy">${step.copy}</div>
+          <div class="shared-tag">${step.tag}</div>
+        `;
+        shared.appendChild(el);
+      });
+
+      const split = root.querySelector('.publish-split');
+      const preprodItems = cascadeFlow.publishSplit.preprod.bullets.map((item) => `<li>${item}</li>`).join('');
+      const prodItems = cascadeFlow.publishSplit.prod.bullets.map((item) => `<li>${item}</li>`).join('');
+      split.innerHTML = `
+        <div class="publish-split-title">${cascadeFlow.publishSplit.title}</div>
+        <div class="publish-grid">
+          <article class="publish-card preprod" style="--publish-accent:#0f766e;">
+            <div class="publish-title">${cascadeFlow.publishSplit.preprod.title}</div>
+            <div class="publish-copy">${cascadeFlow.publishSplit.preprod.copy}</div>
+            <ul class="publish-list">${preprodItems}</ul>
+          </article>
+          <article class="publish-card prod" style="--publish-accent:#4f46e5;">
+            <div class="publish-title">${cascadeFlow.publishSplit.prod.title}</div>
+            <div class="publish-copy">${cascadeFlow.publishSplit.prod.copy}</div>
+            <ul class="publish-list">${prodItems}</ul>
+          </article>
+        </div>
+        <div class="promotion-note">${cascadeFlow.publishSplit.promotion}</div>
+      `;
+    }
+
+    function renderGapMap() {
+      const root = document.getElementById('gapMap');
+      gapMapItems.forEach((item) => {
+        const card = document.createElement('section');
+        card.className = 'gap-card';
+        const baseline = item.baseline.map((entry) => `<li>${entry}</li>`).join('');
+        const built = item.built.map((entry) => `<li>${entry}</li>`).join('');
+        const validate = item.validate.map((entry) => `<li>${entry}</li>`).join('');
+        const fresh = item.new.map((entry) => `<li>${entry}</li>`).join('');
+        card.innerHTML = `
+          <div class="gap-header">
+            <div class="gap-title">${item.title}</div>
+            <div class="gap-subtitle">${item.subtitle}</div>
+          </div>
+          <div class="gap-grid">
+            <div class="gap-cell baseline">
+              <div class="gap-label">What We Have Now</div>
+              <ul class="gap-list">${baseline}</ul>
+            </div>
+            <div class="gap-cell built">
+              <div class="gap-label">What The Analyst Team Has Built</div>
+              <ul class="gap-list">${built}</ul>
+            </div>
+            <div class="gap-cell validate">
+              <div class="gap-label">What We Must Validate Or Harden</div>
+              <ul class="gap-list">${validate}</ul>
+            </div>
+            <div class="gap-cell new">
+              <div class="gap-label">What Still Must Be Built</div>
+              <ul class="gap-list">${fresh}</ul>
+            </div>
+          </div>
+        `;
+        root.appendChild(card);
+      });
+    }
+
+    function renderReviewQuestions() {
+      const root = document.getElementById('questionsBoard');
+      if (!root) return;
+      reviewQuestionGroups.forEach((group, index) => {
+        const wrapper = document.createElement('section');
+        wrapper.className = 'question-accordion';
+        const questions = group.questions.map((question) => `<li>${question}</li>`).join('');
+        wrapper.innerHTML = `
+          <button class="question-toggle" type="button" aria-expanded="false">
+            <span class="question-chevron">›</span>
+            <span class="question-title">${group.title}</span>
+            <span class="question-count">${group.questions.length} questions</span>
+          </button>
+          <div class="question-panel">
+            <div class="question-context">${group.context}</div>
+            <ul class="review-question-list">${questions}</ul>
+          </div>
+        `;
+        const toggle = wrapper.querySelector('.question-toggle');
+        toggle.addEventListener('click', () => {
+          const isOpen = wrapper.classList.toggle('open');
+          toggle.setAttribute('aria-expanded', String(isOpen));
+        });
+        if (index === 0) {
+          wrapper.classList.add('open');
+          toggle.setAttribute('aria-expanded', 'true');
+        }
+        root.appendChild(wrapper);
+      });
+    }
+
+    function renderProcessWalkthrough() {
+      const processRoot = document.getElementById('processBoard');
+      processWalkthrough.forEach((item) => {
+        const wrapper = document.createElement('section');
+        wrapper.className = 'process-card';
+        const badges = item.badges.map((badge) => `<span class="badge ${badge.cls}">${badge.text}</span>`).join('');
+        const makeList = (items, cls) => `<ul class="${cls}">${items.map((entry) => `<li>${entry}</li>`).join('')}</ul>`;
+        wrapper.innerHTML = `
+          <div class="process-header">
+            <div class="card-title">${item.title}</div>
+            <div class="badges">${badges}</div>
+          </div>
+          <div class="process-grid">
+            <div class="process-cell current">
+              <div class="cell-label">Current ADW Process</div>
+              ${makeList(item.current, 'step-list')}
+              <div class="step-highlight manual">${item.manualNote}</div>
+            </div>
+            <div class="process-cell future">
+              <div class="cell-label">New Moirai Process</div>
+              ${makeList(item.future, 'step-list')}
+              <div class="step-highlight future">${item.futureNote}</div>
+            </div>
+            <div class="process-cell automation">
+              <div class="cell-label">Automation / Streamlining Introduced</div>
+              ${makeList(item.automation, 'automation-list')}
+              <div class="step-highlight auto">${item.autoNote}</div>
+            </div>
+          </div>
+        `;
+        processRoot.appendChild(wrapper);
+      });
+    }
+
+    initTabs();
+    renderCurrentWorkflow();
+    renderCascadeFlow();
+    renderGapMap();
+    renderProcessWalkthrough();
+    renderReviewQuestions();
+  </script>
+</body>
+</html>
