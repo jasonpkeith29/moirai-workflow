@@ -90,14 +90,19 @@
       line-height: 1.18;
       font-weight: 800;
       color: var(--text-main);
-      max-width: 1180px;
+      max-width: 100%;
     }
     .hero-story-copy {
       margin: 0;
-      max-width: 1120px;
+      max-width: 100%;
+      width: 100%;
       color: var(--text-muted);
       font-size: 15px;
       line-height: 1.65;
+    }
+    .header .hero-story-copy {
+      max-width: 100%;
+      width: 100%;
     }
     .story-cluster {
       margin-bottom: 18px;
@@ -1118,6 +1123,134 @@
     .next-steps-decision-cluster {
       margin-top: 14px;
     }
+    .technical-component-grid,
+    .technical-stage-grid,
+    .technical-interface-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .technical-component-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .technical-stage-grid,
+    .technical-interface-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .technical-card,
+    .technical-stage-card,
+    .technical-interface-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .technical-card,
+    .technical-stage-card,
+    .technical-interface-card {
+      padding: 16px;
+    }
+    .technical-card::before,
+    .technical-stage-card::before,
+    .technical-interface-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      height: 5px;
+      background: var(--tech-accent, var(--slate));
+    }
+    .technical-card.intake { --tech-accent: #2563eb; background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%); }
+    .technical-card.validation { --tech-accent: #0f766e; background: linear-gradient(180deg, #ecfeff 0%, #ffffff 100%); }
+    .technical-card.build { --tech-accent: #7c3aed; background: linear-gradient(180deg, #faf5ff 0%, #ffffff 100%); }
+    .technical-card.publish { --tech-accent: #ea580c; background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%); }
+    .technical-stage-card.stage-1 { --tech-accent: #2563eb; background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%); }
+    .technical-stage-card.stage-2 { --tech-accent: #0f766e; background: linear-gradient(180deg, #ecfeff 0%, #ffffff 100%); }
+    .technical-stage-card.stage-3 { --tech-accent: #7c3aed; background: linear-gradient(180deg, #faf5ff 0%, #ffffff 100%); }
+    .technical-stage-card.stage-4 { --tech-accent: #ea580c; background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%); }
+    .technical-stage-card.stage-5 { --tech-accent: #0f172a; background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%); }
+    .technical-stage-card.stage-6 { --tech-accent: #0f766e; background: linear-gradient(180deg, #f0fdfa 0%, #ffffff 100%); }
+    .technical-interface-card.interface-1 { --tech-accent: #2563eb; background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%); }
+    .technical-interface-card.interface-2 { --tech-accent: #0f766e; background: linear-gradient(180deg, #ecfeff 0%, #ffffff 100%); }
+    .technical-interface-card.interface-3 { --tech-accent: #7c3aed; background: linear-gradient(180deg, #faf5ff 0%, #ffffff 100%); }
+    .technical-interface-card.interface-4 { --tech-accent: #ea580c; background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%); }
+    .technical-interface-card.interface-5 { --tech-accent: #0f172a; background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%); }
+    .technical-interface-card.interface-6 { --tech-accent: #0f766e; background: linear-gradient(180deg, #f0fdfa 0%, #ffffff 100%); }
+    .technical-kicker {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 8px;
+    }
+    .technical-card h3,
+    .technical-stage-card h3,
+    .technical-interface-card h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+    .technical-card p,
+    .technical-stage-card p,
+    .technical-interface-card p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .technical-list {
+      margin: 10px 0 0;
+      padding-left: 18px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-main);
+    }
+    .technical-list li + li {
+      margin-top: 6px;
+    }
+    .technical-footer {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(148, 163, 184, 0.22);
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+    .technical-block {
+      margin-top: 12px;
+    }
+    .technical-block-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 6px;
+    }
+    .technical-inline-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .technical-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--text-main);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
     .tab-section-intro {
       margin-bottom: 16px;
       color: var(--text-muted);
@@ -1480,6 +1613,9 @@
       .proposal-flow-grid,
       .accountability-problem-grid,
       .accountability-role-grid,
+      .technical-component-grid,
+      .technical-stage-grid,
+      .technical-interface-grid,
       .workflow-steps,
       .entry-lanes,
       .shared-flow,
@@ -1497,7 +1633,7 @@
     }
     @media (max-width: 720px) {
       .page { padding: 16px; }
-      .summary-grid, .story-grid, .strategy-grid, .decision-grid, .phase-grid, .diagnostic-grid, .org-problem-grid, .stakeholder-grid, .proposal-flow-grid, .accountability-problem-grid, .accountability-role-grid { grid-template-columns: 1fr; }
+      .summary-grid, .story-grid, .strategy-grid, .decision-grid, .phase-grid, .diagnostic-grid, .org-problem-grid, .stakeholder-grid, .proposal-flow-grid, .accountability-problem-grid, .accountability-role-grid, .technical-component-grid, .technical-stage-grid, .technical-interface-grid { grid-template-columns: 1fr; }
       .hero-story-title { font-size: 22px; }
       .hero-story-copy { font-size: 14px; }
       .header-note,
@@ -1510,9 +1646,9 @@
     <header class="header">
       <div class="eyebrow">Platform Story</div>
       <div class="hero-story">
-        <div class="hero-story-label">Why This Matters</div>
-        <h1 class="hero-story-title">ADW is a critical enterprise data foundation. The way data is added, governed, and maintained within it now needs to scale like the asset itself.</h1>
-        <p class="hero-story-copy">ADW is more than a warehouse or reporting destination. It supports trusted analytics, executive reporting, downstream decisions, and future AI use cases. The challenge is not simply that one workflow is too manual. The challenge is that a critical enterprise asset is still being expanded and governed through a model that depends too heavily on manual coordination, expert knowledge, and fragmented workflow patterns. This page explains why that matters, what automation already exists, and why a shared ingestion and governance platform is the strategic next step.</p>
+        <div class="hero-story-label">Strategic Goal And North Star</div>
+        <h1 class="hero-story-title">ADW is a critical enterprise data foundation. Our goal is to build a more hardened, structured, and visible platform that allows analyst teams to create governed data models and push them into Snowflake in a scalable, trusted, and repeatable way.</h1>
+        <p class="hero-story-copy">ADW is more than a warehouse or reporting destination. It supports trusted analytics, executive reporting, downstream decisions, and future AI use cases. ADW is the starting use case for this effort, but the broader north star is a reusable platform pattern for governed data-model creation, validation, orchestration, governance, and publication over time. The goal is to move from a model that depends heavily on manual coordination, expert knowledge, and fragmented workflow patterns to one where analysts can bring business intent and data logic, and the platform handles the repeatable mechanics. This page explains the current state, what already exists, and the platform direction required to get there.</p>
       </div>
     </header>
 
@@ -1524,6 +1660,7 @@
         <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab-target="gapTab">What We Have vs What We Need</button>
         <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab-target="accountabilityTab">Roles and Accountability</button>
         <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab-target="nextStepsTab">Next Steps</button>
+        <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab-target="technicalTab">Technical Architecture</button>
       </div>
 
       <section class="tab-panel active" id="problemTab" role="tabpanel">
@@ -2039,9 +2176,226 @@
           </section>
         </section>
       </section>
+
+      <section class="tab-panel" id="technicalTab" role="tabpanel">
+        <section class="story-cluster" aria-label="Technical architecture story">
+          <div class="hero-box">
+            <div class="hero-eyebrow">Technical Architecture</div>
+            <h1>What Happens, Where It Happens, And What The Ideal Stack Looks Like</h1>
+            <p>This companion view maps the workflow in practice. Each stage shows what is happening, where the user or process is operating, which system is actually doing the work, and where the technical decisions still need to be made.</p>
+          </div>
+
+          <section class="wide-callout">
+            <h3>How to read this view</h3>
+            <p>Each box ties the business workflow to the technical layer underneath it. The goal is to make it clear where the platform is adding value, where the handoffs happen, which systems would ideally be responsible for each step, and what still needs to be designed more precisely.</p>
+          </section>
+        </section>
+
+        <section class="proposal-cluster" aria-label="Workflow in practice and where it happens">
+          <h3 class="subsection-title">Workflow in practice: what happens, where it happens, and what runs it</h3>
+          <p class="subsection-copy">This is the ideal end-to-end platform flow. Each stage shows the user surface, the underlying system of work, the likely technology choice, and the main technical question still to resolve.</p>
+          <div class="technical-stage-grid">
+            <section class="technical-stage-card stage-1">
+              <div class="technical-kicker">Stage 1</div>
+              <h3>Request and Intake</h3>
+              <p>The analyst starts the process in a chat-style interface by describing the business need, the domain context, and the kind of ADW asset they are trying to create. They should also be able to paste a starting SQL query or logic pattern so the system can use that as input rather than forcing them to begin from scratch.</p>
+              <div class="technical-block">
+                <div class="technical-block-label">Where the user is</div>
+                <p>In an LLM-driven chat interface, ideally in a platform they already use regularly. A Snowflake-native starting point, potentially using Cortex, is a plausible first surface if that proves usable for analysts.</p>
+              </div>
+              <div class="technical-block">
+                <div class="technical-block-label">What system does the work</div>
+                <p>The chat layer captures the request, asks clarifying follow-up questions, summarizes the analyst's intent, and turns the conversation and any starter SQL into a structured request contract the platform can validate and route.</p>
+              </div>
+              <div class="technical-inline-pills">
+                <span class="technical-pill">LLM Chat Interface</span>
+                <span class="technical-pill">Starter SQL Input</span>
+                <span class="technical-pill">Request Contract</span>
+              </div>
+              <div class="technical-footer">Open design decision: whether the first POC should start inside Snowflake using Cortex as the analyst-facing chat surface, or use a separate lightweight web interface that can later integrate more tightly with Snowflake.</div>
+            </section>
+            <section class="technical-stage-card stage-2">
+              <div class="technical-kicker">Stage 2</div>
+              <h3>Validation and Routing</h3>
+              <p>The platform now needs to determine whether the request makes sense, whether the starter SQL or logic is efficient enough to build from, and whether the analyst is asking for a new asset, a change to an existing asset, or something that may already exist in ADW.</p>
+              <div class="technical-block">
+                <div class="technical-block-label">Where it happens</div>
+                <p>In the backend platform service layer immediately after intake, before anything is generated for Snowflake, dbt, or Airflow.</p>
+              </div>
+              <div class="technical-block">
+                <div class="technical-block-label">What system does the work</div>
+                <p>A validation and routing service checks the business intent, looks for missing information, reviews the starter SQL for obvious inefficiencies or anti-patterns, and compares the request against known assets or existing patterns before choosing the next path.</p>
+              </div>
+              <div class="technical-inline-pills">
+                <span class="technical-pill">Business Need Validation</span>
+                <span class="technical-pill">SQL Review</span>
+                <span class="technical-pill">Existing Asset Check</span>
+              </div>
+              <div class="technical-footer">Open design decision: how much of the SQL review and duplicate-asset detection should be deterministic versus LLM-assisted, and how confidently the POC can identify when an existing ADW asset should be reused instead of creating something new.</div>
+            </section>
+            <section class="technical-stage-card stage-3">
+              <div class="technical-kicker">Stage 3</div>
+              <h3>Asset Design and Artifact Generation</h3>
+              <p>Once the request is validated, the platform translates the analyst's business intent, starter SQL, and routing decision into a durable ADW asset pattern. This is where exploratory logic starts becoming a reusable fact table, dimension, metric layer, or change to an existing governed asset.</p>
+              <div class="technical-block">
+                <div class="technical-block-label">Where the user is</div>
+                <p>The analyst is still in the platform workflow reviewing the recommended asset shape and any generated outputs, while the system handles the underlying technical assembly.</p>
+              </div>
+              <div class="technical-block">
+                <div class="technical-block-label">What system does the work</div>
+                <p>An asset-design and generation service refines the SQL or logic as needed, maps it to the right ADW pattern, and produces the technical outputs required for execution, testing, metadata, and orchestration.</p>
+              </div>
+              <div class="technical-inline-pills">
+                <span class="technical-pill">Asset Patterning</span>
+                <span class="technical-pill">Artifact Generator</span>
+                <span class="technical-pill">Generated SQL / Config</span>
+              </div>
+              <div class="technical-footer">Open design decision: how much the POC should auto-rewrite or optimize analyst SQL versus preserving it more directly and only wrapping it in a standard asset pattern.</div>
+            </section>
+            <section class="technical-stage-card stage-4">
+              <div class="technical-kicker">Stage 4</div>
+              <h3>Execution and Validation in Lower Environments</h3>
+              <p>The generated asset pattern now runs in lower environments so the team can confirm that the output is correct, the SQL or transformation logic behaves as intended, quality checks pass, and the workflow is reliable before broader publication.</p>
+              <div class="technical-block">
+                <div class="technical-block-label">Where it happens</div>
+                <p>In the orchestration runtime and the data execution systems, with review happening through the platform and lower-environment output surfaces rather than in the intake flow itself.</p>
+              </div>
+              <div class="technical-block">
+                <div class="technical-block-label">What system does the work</div>
+                <p>Airflow orchestrates the run, Snowflake performs the data work, dbt can be used where transformation logic benefits from it, and the platform surfaces the output back for review so the analyst and broader team can validate that the asset is actually usable.</p>
+              </div>
+              <div class="technical-inline-pills">
+                <span class="technical-pill">Airflow</span>
+                <span class="technical-pill">Snowflake</span>
+                <span class="technical-pill">Analyst Output Review</span>
+              </div>
+              <div class="technical-footer">Open design decision: how much validation the analyst should do directly in the platform versus in familiar lower-environment data tools, and which asset types should stay Snowflake-native versus use dbt in the POC.</div>
+            </section>
+            <section class="technical-stage-card stage-5">
+              <div class="technical-kicker">Stage 5</div>
+              <h3>Approval, Governance, and Publish</h3>
+              <p>Before the output is published more broadly, the platform checks that the agreed controls have been met. This is where trust, metadata completeness, approval state, and the chosen publication path come together.</p>
+              <div class="technical-block">
+                <div class="technical-block-label">Where it happens</div>
+                <p>In the publish-control layer, governance checkpoints, and metadata or catalog surfaces connected to the ADW asset.</p>
+              </div>
+              <div class="technical-block">
+                <div class="technical-block-label">What system does the work</div>
+                <p>The platform enforces deterministic publish rules, writes trust and metadata state back to the right systems, and leaves only the approvals that genuinely need a human decision.</p>
+              </div>
+              <div class="technical-inline-pills">
+                <span class="technical-pill">Publish Gate</span>
+                <span class="technical-pill">Metadata Layer</span>
+                <span class="technical-pill">Catalog / Trust Update</span>
+              </div>
+              <div class="technical-footer">Open design decision: which governance checks can be fully automated in the POC and which still require explicit human sign-off.</div>
+            </section>
+            <section class="technical-stage-card stage-6">
+              <div class="technical-kicker">Stage 6</div>
+              <h3>Support, Monitoring, and Recovery</h3>
+              <p>Once the workflow is live, it needs a support model that Engineering can actually own. That means run visibility, failures, alerting, rollback paths, and clear ownership cannot be an afterthought.</p>
+              <div class="technical-block">
+                <div class="technical-block-label">Where it happens</div>
+                <p>In the observability and support layer that sits alongside Airflow, Snowflake, and the platform services.</p>
+              </div>
+              <div class="technical-block">
+                <div class="technical-block-label">What system does the work</div>
+                <p>Monitoring, run history, alerting, and recovery tooling capture what happened and make the workflow supportable as a real platform capability.</p>
+              </div>
+              <div class="technical-inline-pills">
+                <span class="technical-pill">Monitoring</span>
+                <span class="technical-pill">Run Logs</span>
+                <span class="technical-pill">Rollback / Remediation</span>
+              </div>
+              <div class="technical-footer">Open design decision: what the minimum observability and support model needs to be for Engineering to credibly own the POC once it is running.</div>
+            </section>
+          </div>
+        </section>
+
+        <section class="proposal-cluster" aria-label="Ideal technical shape">
+          <h3 class="subsection-title">Working assumptions for the ideal technical shape</h3>
+          <p class="subsection-copy">These are the assumptions that make the current proposal coherent, given the technology stack the organization already has.</p>
+          <div class="technical-component-grid">
+            <section class="technical-card intake">
+              <div class="technical-kicker">Working Assumption</div>
+              <h3>Interaction should start in a Snowflake-native analyst surface</h3>
+              <p>Most users in this workflow are analysts who already spend time in Snowflake and can often provide starter SQL. The intake experience should meet them there through a Snowflake-native, LLM-driven interface that captures intent, logic, and context without asking them to build workflow mechanics.</p>
+              <ul class="technical-list">
+                <li>A Snowflake-native analyst interface is the preferred intake surface</li>
+                <li>Cortex should power the conversational and reasoning layer</li>
+                <li>Users should be able to provide starter SQL or logic as input</li>
+              </ul>
+            </section>
+            <section class="technical-card validation">
+              <div class="technical-kicker">Working Assumption</div>
+              <h3>Validation should combine deterministic checks with targeted AI assist</h3>
+              <p>The platform should enforce the known rules through application logic first, but this stage also needs help evaluating starter SQL, spotting anti-patterns, and checking whether the request maps to an existing asset. AI assistance should strengthen that review, not replace deterministic controls.</p>
+              <ul class="technical-list">
+                <li>Business intent, required fields, and routing logic should be deterministic</li>
+                <li>SQL review and duplicate-asset detection can be partly LLM-assisted</li>
+                <li>Governance logic should stay explainable and auditable</li>
+              </ul>
+            </section>
+            <section class="technical-card build">
+              <div class="technical-kicker">Working Assumption</div>
+              <h3>Asset patterning and generation should be a platform service</h3>
+              <p>Validated analyst logic should be translated into the right ADW asset pattern by a reusable service layer rather than manually assembled by each analyst. That service should handle SQL refinement, generated outputs, metadata updates, and the workflow artifacts needed downstream.</p>
+              <ul class="technical-list">
+                <li>Generation logic should be pattern-driven and reusable</li>
+                <li>Starter SQL can be refined, wrapped, or optimized by the platform</li>
+                <li>Config should be created and managed by the platform where possible</li>
+              </ul>
+            </section>
+            <section class="technical-card publish">
+              <div class="technical-kicker">Working Assumption</div>
+              <h3>Airflow and Snowflake remain the core execution layers</h3>
+              <p>Snowflake should continue to handle the data work and Airflow should continue to orchestrate it, but both should sit behind cleaner platform patterns. dbt should be used where it helps, not as a mandatory layer everywhere.</p>
+              <ul class="technical-list">
+                <li>Snowflake remains the main data execution and storage layer</li>
+                <li>Airflow remains the orchestration runtime</li>
+                <li>dbt is an intentional option, not a universal requirement</li>
+              </ul>
+            </section>
+          </div>
+        </section>
+
+        <section class="proposal-cluster" aria-label="POC technical build scope">
+          <h3 class="subsection-title">What the POC likely builds, reuses, and interfaces with</h3>
+          <p class="subsection-copy">The POC should prove the platform pattern in a concrete way without pretending it needs to rebuild the entire environment on day one.</p>
+          <div class="technical-interface-grid">
+            <section class="technical-interface-card interface-1">
+              <div class="technical-kicker">POC Scope</div>
+              <h3>Likely Build Directly</h3>
+              <ul class="technical-list">
+                <li>A Snowflake-native intake experience, likely using Cortex with a lightweight in-platform UI if more structure is needed</li>
+                <li>A validation and routing service that checks business need, SQL quality, and existing-asset reuse</li>
+                <li>An asset-patterning and generation layer for standard workflow paths</li>
+              </ul>
+            </section>
+            <section class="technical-interface-card interface-2">
+              <div class="technical-kicker">POC Scope</div>
+              <h3>Likely Reuse or Harden</h3>
+              <ul class="technical-list">
+                <li>Analyst-team automation that already works and can be productized</li>
+                <li>Existing SQL guidance, optimization patterns, or generation logic worth preserving</li>
+                <li>Existing governance controls enforced in a more consistent way</li>
+              </ul>
+            </section>
+            <section class="technical-interface-card interface-3">
+              <div class="technical-kicker">POC Scope</div>
+              <h3>Likely Interface With</h3>
+              <ul class="technical-list">
+                <li>Snowflake and the ADW runtime environment, including Cortex as the likely first intake layer</li>
+                <li>Airflow orchestration and lower-environment execution paths</li>
+                <li>Metadata, catalog, approval, and support systems already in place</li>
+              </ul>
+            </section>
+          </div>
+        </section>
+      </section>
     </div>
 
-    <p class="footer">Use the tabs to move from problem statement to platform strategy, then into workflow detail, gap analysis, and concrete next steps.</p>
+    <p class="footer">Use the tabs to move from problem statement to platform strategy, then into workflow detail, gap analysis, concrete next steps, and the companion technical architecture view.</p>
   </div>
 
   <script>
